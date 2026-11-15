@@ -62,9 +62,11 @@ export interface DashboardData {
       openItems: number;
       weekMinutes: number;
     };
-    consulting: {
-      nextSession?: { nextSessionAt: string; clientName: string };
-      pendingActions: number;
+    learning: {
+      activeGoals: number;
+      pendingTasks: number;
+      nextTask?: { title: string; goalTitle: string; planDate: string | null };
+      weekMinutes: number;
     };
     fitness: {
       completedThisWeek: number;
@@ -197,51 +199,52 @@ export interface DevData {
   timeEntries: DevTimeEntry[];
 }
 
-export interface ConsultingClient {
+export interface LearningGoal {
   id: string;
-  name: string;
-  contactNotes: string;
-  direction: string;
-  status: "active" | "paused" | "archived";
-  archived: number;
-}
-
-export interface ConsultingProject {
-  id: string;
-  clientId: string;
-  name: string;
-  goal: string;
-  status: "intake" | "active" | "paused" | "completed";
+  title: string;
+  description: string;
+  category: string;
+  status: "planning" | "active" | "paused" | "completed";
   startDate: string | null;
-  nextSessionAt: string | null;
-  feeStatus: "unquoted" | "pending" | "partial" | "paid" | "not_required";
+  targetDate: string | null;
+  progress: number;
 }
 
-export interface ConsultingSession {
+export interface LearningStage {
   id: string;
-  projectId: string;
-  sessionDate: string;
-  durationMinutes: number | null;
-  method: string;
-  topics: string;
-  conclusions: string;
+  goalId: string;
+  title: string;
+  status: "planning" | "in_progress" | "completed";
+  position: number;
   notes: string;
 }
 
-export interface ConsultingAction {
+export interface LearningTask {
   id: string;
-  projectId: string;
+  goalId: string;
+  stageId: string | null;
   title: string;
-  owner: string;
-  dueDate: string | null;
-  completed: number;
+  planDate: string | null;
+  status: "todo" | "in_progress" | "completed";
+  estimatedMinutes: number | null;
+  notes: string;
 }
 
-export interface ConsultingData {
-  clients: ConsultingClient[];
-  projects: ConsultingProject[];
-  sessions: ConsultingSession[];
-  actions: ConsultingAction[];
+export interface LearningLog {
+  id: string;
+  goalId: string;
+  taskId: string | null;
+  studyDate: string;
+  durationMinutes: number;
+  content: string;
+  progressAfter: number | null;
+}
+
+export interface LearningData {
+  goals: LearningGoal[];
+  stages: LearningStage[];
+  tasks: LearningTask[];
+  logs: LearningLog[];
 }
 
 export interface FitnessExercise {

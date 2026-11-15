@@ -1,7 +1,7 @@
 import path from "node:path";
 import { defineConfig, devices } from "@playwright/test";
 
-const port = 4318;
+const port = 4320;
 
 export default defineConfig({
   testDir: "tests/e2e",

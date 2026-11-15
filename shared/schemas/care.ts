@@ -38,7 +38,7 @@ export const careWishSchema = z.object({
   title: z.string().trim().min(1).max(200),
   type: z.enum(["wish", "gift", "date", "other"]).default("wish"),
   status: z.enum(["idea", "planning", "completed"]).default("idea"),
-  budget: z.number().nonnegative().nullable().optional(),
+  budget: z.number().int("预算必须填写整数元").nonnegative().nullable().optional(),
   targetDate: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)

@@ -27,6 +27,12 @@ test("creates care profile, anniversary and photo story", async ({ page }) => {
   ).toBeVisible();
 
   await page.getByRole("button", { name: "记录趣事" }).click();
+  const dialogBox = await page.getByRole("dialog", { name: "添加相处趣事" }).boundingBox();
+  const viewport = page.viewportSize()!;
+  expect(dialogBox).not.toBeNull();
+  expect(
+    Math.abs(dialogBox!.x + dialogBox!.width / 2 - viewport.width / 2)
+  ).toBeLessThan(3);
   await page.getByLabel("标题").fill("第一次一起做晚饭");
   await page.getByLabel("发生了什么").fill("盐放多了一点，但下次还想一起做。");
   await page.getByLabel("地点").fill("家里");
@@ -38,6 +44,12 @@ test("creates care profile, anniversary and photo story", async ({ page }) => {
   });
   await page.getByRole("button", { name: "保存趣事" }).click();
   await expect(page.getByText("第一次一起做晚饭")).toBeVisible();
+  const expectedDate = new Intl.DateTimeFormat("zh-CN", {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  }).format(new Date());
+  await expect(page.locator(".story-full-date")).toHaveText(expectedDate);
   await expect(
     page.getByRole("img", { name: "趣事照片：第一次一起做晚饭" })
   ).toBeVisible();
@@ -47,4 +59,14 @@ test("creates care profile, anniversary and photo story", async ({ page }) => {
   await expect(
     page.getByRole("img", { name: "趣事照片：第一次一起做晚饭" })
   ).toBeVisible();
+
+  const wishPanel = page.locator("section.panel").filter({
+    has: page.getByRole("heading", { name: "小心愿与礼物" })
+  });
+  await wishPanel.getByRole("button", { name: "添加" }).click();
+  await page.getByLabel("心愿或礼物").fill("一起看日落");
+  await page.getByLabel("预算（整数元，可选）").fill("200");
+  await page.getByRole("button", { name: "保存小心愿" }).click();
+  await expect(wishPanel.getByText("一起看日落")).toBeVisible();
+  await expect(wishPanel.getByText(/¥200/)).toBeVisible();
 });

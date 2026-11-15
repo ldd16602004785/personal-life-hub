@@ -42,7 +42,8 @@ function seedSettings(database: Database.Database): void {
     weekStartsOn: "1",
     defaultPage: "/",
     backupRetention: "30",
-    waterTargetMl: "2000"
+    waterTargetMl: "2000",
+    fontSize: "small"
   };
 
   const insert = database.prepare(

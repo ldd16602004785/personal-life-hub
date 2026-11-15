@@ -12,7 +12,7 @@ const settingsSchema = z.object({
       "/today",
       "/care",
       "/dev",
-      "/consulting",
+      "/learning",
       "/fitness",
       "/diet",
       "/entertainment",
@@ -20,7 +20,8 @@ const settingsSchema = z.object({
     ])
     .optional(),
   backupRetention: z.coerce.number().int().min(1).max(365).optional(),
-  waterTargetMl: z.coerce.number().int().min(100).max(10000).optional()
+  waterTargetMl: z.coerce.number().int().min(100).max(10000).optional(),
+  fontSize: z.enum(["small", "medium", "large", "xlarge"]).optional()
 });
 
 export function registerSettingsRoutes(app: FastifyInstance): void {

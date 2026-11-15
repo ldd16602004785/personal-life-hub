@@ -14,9 +14,9 @@ const CarePage = lazy(() =>
 const DevPage = lazy(() =>
   import("../features/dev/DevPage").then((module) => ({ default: module.DevPage }))
 );
-const ConsultingPage = lazy(() =>
-  import("../features/consulting/ConsultingPage").then((module) => ({
-    default: module.ConsultingPage
+const LearningPage = lazy(() =>
+  import("../features/learning/LearningPage").then((module) => ({
+    default: module.LearningPage
   }))
 );
 const FitnessPage = lazy(() =>
@@ -51,7 +51,8 @@ export const router = createBrowserRouter([
       { path: "today", element: page(<TodayPage />) },
       { path: "care", element: page(<CarePage />) },
       { path: "dev", element: page(<DevPage />) },
-      { path: "consulting", element: page(<ConsultingPage />) },
+      { path: "learning", element: page(<LearningPage />) },
+      { path: "consulting", element: <Navigate to="/learning" replace /> },
       { path: "fitness", element: page(<FitnessPage />) },
       { path: "diet", element: page(<DietPage />) },
       { path: "entertainment", element: page(<EntertainmentPage />) },

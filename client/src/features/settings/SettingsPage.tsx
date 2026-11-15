@@ -49,7 +49,7 @@ export function SettingsPage() {
       invalidateAll();
     },
     onError: (error) => {
-      setSaveError();
+      setSaveError(error.message);
       notify(error.message, "error");
     }
   });
@@ -89,7 +89,7 @@ export function SettingsPage() {
       invalidateAll();
     },
     onError: (error) => {
-      setSaveError();
+      setSaveError(error.message);
       notify(error.message, "error");
     }
   });
@@ -208,14 +208,16 @@ function SettingsForm({ values, onSave }: { values: Record<string, string>; onSa
     weekStartsOn: values.weekStartsOn ?? "1",
     defaultPage: values.defaultPage ?? "/",
     backupRetention: values.backupRetention ?? "30",
-    waterTargetMl: values.waterTargetMl ?? "2000"
+    waterTargetMl: values.waterTargetMl ?? "2000",
+    fontSize: values.fontSize ?? "small"
   });
   return (
     <form className="panel-body settings-form" onSubmit={(event) => { event.preventDefault(); void onSave(form); }}>
       <label className="field"><span>一周开始于</span><select value={form.weekStartsOn} onChange={(event) => setForm({ ...form, weekStartsOn: event.target.value })}><option value="1">周一</option><option value="0">周日</option></select></label>
-      <label className="field"><span>默认启动页面</span><select value={form.defaultPage} onChange={(event) => setForm({ ...form, defaultPage: event.target.value })}><option value="/">首页</option><option value="/today">今日计划</option><option value="/care">关怀对象</option><option value="/dev">开发工作</option><option value="/consulting">咨询工作</option><option value="/fitness">健身计划</option><option value="/diet">饮食计划</option><option value="/entertainment">游戏娱乐</option><option value="/settings">数据与设置</option></select></label>
+      <label className="field"><span>默认启动页面</span><select value={form.defaultPage} onChange={(event) => setForm({ ...form, defaultPage: event.target.value })}><option value="/">首页</option><option value="/today">今日计划</option><option value="/care">关怀对象</option><option value="/dev">开发工作</option><option value="/learning">学习计划</option><option value="/fitness">健身计划</option><option value="/diet">饮食计划</option><option value="/entertainment">游戏娱乐</option><option value="/settings">数据与设置</option></select></label>
       <label className="field"><span>保留最近备份数</span><input max={365} min={1} type="number" value={form.backupRetention} onChange={(event) => setForm({ ...form, backupRetention: event.target.value })} /></label>
       <label className="field"><span>每日饮水目标（ml）</span><input max={10000} min={100} type="number" value={form.waterTargetMl} onChange={(event) => setForm({ ...form, waterTargetMl: event.target.value })} /></label>
+      <label className="field"><span>界面字号</span><select value={form.fontSize} onChange={(event) => setForm({ ...form, fontSize: event.target.value })}><option value="small">小</option><option value="medium">中</option><option value="large">大</option><option value="xlarge">特大</option></select></label>
       <button className="button primary" type="submit"><Settings2 size={14} />保存设置</button>
     </form>
   );

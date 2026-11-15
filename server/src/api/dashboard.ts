@@ -103,19 +103,33 @@ export function registerDashboardRoutes(app: FastifyInstance): void {
         .get(weekStart)
     );
 
-    const nextSession = database
-      .prepare(
-        `SELECT p.next_session_at AS nextSessionAt, c.name AS clientName
-         FROM consulting_projects p JOIN consulting_clients c ON c.id = p.client_id
-         WHERE p.next_session_at IS NOT NULL
-         ORDER BY p.next_session_at LIMIT 1`
-      )
-      .get();
-    const pendingConsultingActions = numberValue(
+    const activeLearningGoals = numberValue(
       database
-        .prepare("SELECT COUNT(*) FROM consulting_actions WHERE completed = 0")
+        .prepare("SELECT COUNT(*) FROM learning_goals WHERE status = 'active'")
         .pluck()
         .get()
+    );
+    const pendingLearningTasks = numberValue(
+      database
+        .prepare("SELECT COUNT(*) FROM learning_tasks WHERE status <> 'completed'")
+        .pluck()
+        .get()
+    );
+    const nextLearningTask = database
+      .prepare(
+        `SELECT t.title, g.title AS goalTitle, t.plan_date AS planDate
+         FROM learning_tasks t JOIN learning_goals g ON g.id = t.goal_id
+         WHERE t.status <> 'completed'
+         ORDER BY coalesce(t.plan_date, '9999-12-31'), t.created_at LIMIT 1`
+      )
+      .get();
+    const learningMinutes = numberValue(
+      database
+        .prepare(
+          "SELECT coalesce(SUM(duration_minutes), 0) FROM learning_logs WHERE study_date >= ?"
+        )
+        .pluck()
+        .get(weekStart)
     );
 
     const fitnessCompleted = numberValue(
@@ -190,9 +204,11 @@ export function registerDashboardRoutes(app: FastifyInstance): void {
           openItems: openDevItems,
           weekMinutes: devMinutes
         },
-        consulting: {
-          nextSession,
-          pendingActions: pendingConsultingActions
+        learning: {
+          activeGoals: activeLearningGoals,
+          pendingTasks: pendingLearningTasks,
+          nextTask: nextLearningTask,
+          weekMinutes: learningMinutes
         },
         fitness: {
           completedThisWeek: fitnessCompleted,

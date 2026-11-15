@@ -14,11 +14,11 @@ import { registerDayPlanRoutes } from "./api/day-plans";
 import { registerDashboardRoutes } from "./api/dashboard";
 import { registerCareRoutes } from "./api/care";
 import { registerDevRoutes } from "./api/dev";
-import { registerConsultingRoutes } from "./api/consulting";
 import { registerFitnessRoutes } from "./api/fitness";
 import { registerDietRoutes } from "./api/diet";
 import { registerEntertainmentRoutes } from "./api/entertainment";
 import { registerDataRoutes } from "./api/data";
+import { registerLearningRoutes } from "./api/learning";
 import { maybeCreateDailyBackup } from "./services/backup";
 
 export async function buildApp(
@@ -117,7 +117,7 @@ export async function buildApp(
   registerDashboardRoutes(app);
   registerCareRoutes(app);
   registerDevRoutes(app);
-  registerConsultingRoutes(app);
+  registerLearningRoutes(app);
   registerFitnessRoutes(app);
   registerDietRoutes(app);
   registerEntertainmentRoutes(app);

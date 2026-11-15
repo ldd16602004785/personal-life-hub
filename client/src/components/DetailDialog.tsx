@@ -2,7 +2,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import type { ReactNode } from "react";
 
-export function DetailDrawer({
+export function DetailDialog({
   open,
   onOpenChange,
   title,
@@ -19,8 +19,8 @@ export function DetailDrawer({
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="dialog-overlay" />
-        <Dialog.Content className="detail-drawer">
-          <div className="drawer-head">
+        <Dialog.Content className="detail-dialog">
+          <div className="dialog-head">
             <div>
               <Dialog.Title>{title}</Dialog.Title>
               {description ? <Dialog.Description>{description}</Dialog.Description> : null}
@@ -29,7 +29,7 @@ export function DetailDrawer({
               <X size={17} aria-hidden="true" />
             </Dialog.Close>
           </div>
-          <div className="drawer-body">{children}</div>
+          <div className="detail-dialog-body">{children}</div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

@@ -10,7 +10,7 @@ import {
 import { useState } from "react";
 import { useUI } from "../../app/UIProvider";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
-import { DetailDrawer } from "../../components/DetailDrawer";
+import { DetailDialog } from "../../components/DetailDialog";
 import { EmptyState } from "../../components/EmptyState";
 import { apiRequest } from "../../lib/api";
 import { localDateString } from "../../lib/dates";
@@ -50,6 +50,13 @@ export function DevPage() {
     queryKey: ["settings"],
     queryFn: () => apiRequest<Record<string, string>>("/api/settings")
   });
+  const todayPlans = useQuery({
+    queryKey: ["day-plans", localDateString()],
+    queryFn: () =>
+      apiRequest<{
+        plans: Array<{ sourceModule: string | null; sourceId: string | null }>;
+      }>(`/api/day-plans?date=${localDateString()}`)
+  });
 
   const activeProjectId = projectId || dev.data?.projects[0]?.id || "";
   const project = dev.data?.projects.find((item) => item.id === activeProjectId);
@@ -62,11 +69,17 @@ export function DevPage() {
         entry.workDate >= startOfWeek(Number(settings.data?.weekStartsOn ?? 1))
     )
     .reduce((sum, entry) => sum + entry.durationMinutes, 0);
+  const scheduledDevIds = new Set(
+    todayPlans.data?.plans
+      .filter((plan) => plan.sourceModule === "dev" && plan.sourceId)
+      .map((plan) => plan.sourceId as string) ?? []
+  );
 
   function refresh() {
     void queryClient.invalidateQueries({ queryKey: ["dev"] });
     void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     void queryClient.invalidateQueries({ queryKey: ["day-plan-sources"] });
+    void queryClient.invalidateQueries({ queryKey: ["day-plans"] });
   }
 
   async function mutate(path: string, method: string, payload?: object) {
@@ -147,12 +160,29 @@ export function DevPage() {
   }
 
   async function addItemToToday(item: DevItem) {
-    await mutate("/api/day-plans", "POST", {
-      date: localDateString(),
-      sourceModule: "dev",
-      sourceId: item.id
-    });
-    notify("已加入今日计划");
+    setSaving();
+    try {
+      await apiRequest("/api/day-plans", {
+        method: "POST",
+        body: JSON.stringify({
+          date: localDateString(),
+          sourceModule: "dev",
+          sourceId: item.id
+        })
+      });
+      setSaved();
+      notify("已加入今日计划");
+      refresh();
+    } catch (error) {
+      if ((error as Error).message.includes("已经安排在今天")) {
+        setSaved("该事项已安排");
+        notify("该事项已安排，无需重复操作");
+        void queryClient.invalidateQueries({ queryKey: ["day-plans"] });
+        return;
+      }
+      setSaveError();
+      notify((error as Error).message, "error");
+    }
   }
 
   async function confirmDelete() {
@@ -230,7 +260,7 @@ export function DevPage() {
                     <select aria-label={`改变状态：${item.title}`} onChange={(event) => void updateItemStatus(item, event.target.value as DevItem["status"])} value={item.status}>
                       {columns.map((target) => <option value={target.key} key={target.key}>{target.label}</option>)}
                     </select>
-                    <button className="tiny-text-button" onClick={() => void addItemToToday(item)} type="button">安排</button>
+                    <button className="tiny-text-button" disabled={scheduledDevIds.has(item.id)} onClick={() => void addItemToToday(item)} type="button">{scheduledDevIds.has(item.id) ? "已安排" : "安排"}</button>
                     <button className="icon-text-button" aria-label={`删除事项：${item.title}`} onClick={() => setDeleteTarget({ kind: "item", id: item.id, title: item.title })} type="button"><Trash2 size={12} /></button>
                   </div>
                 </article>
@@ -298,12 +328,12 @@ function DevDrawer({
   onSaveTime: (value: Omit<DevTimeEntry, "id">) => Promise<void>;
 }) {
   return (
-    <DetailDrawer open={Boolean(editor)} onOpenChange={(open) => { if (!open) onClose(); }} title={devEditorTitle(editor)} description="项目数据保存在本地文件中">
+    <DetailDialog open={Boolean(editor)} onOpenChange={(open) => { if (!open) onClose(); }} title={devEditorTitle(editor)} description="项目数据保存在本地文件中">
       {editor?.kind === "project" ? <ProjectForm item={editor.item} onSave={onSaveProject} /> : null}
       {editor?.kind === "item" ? <ItemForm item={editor.item} projectId={projectId} onSave={onSaveItem} /> : null}
       {editor?.kind === "milestone" ? <MilestoneForm item={editor.item} onSave={onSaveMilestone} /> : null}
       {editor?.kind === "time" ? <TimeForm data={data} projectId={projectId} onSave={onSaveTime} /> : null}
-    </DetailDrawer>
+    </DetailDialog>
   );
 }
 

@@ -39,7 +39,10 @@ describe("local storage initialization", () => {
     });
     expect(response.headers["content-security-policy"]).toContain("default-src 'self'");
     expect(response.headers["x-content-type-options"]).toBe("nosniff");
-    expect(migrations).toEqual([{ version: 1, name: "initial_schema" }]);
+    expect(migrations).toEqual([
+      { version: 1, name: "initial_schema" },
+      { version: 2, name: "learning_plan_module" }
+    ]);
   });
 
   it("updates settings only with the local operation token", async () => {

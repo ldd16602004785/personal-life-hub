@@ -3,7 +3,7 @@ import { z } from "zod";
 export const moduleSourceSchema = z.enum([
   "care",
   "dev",
-  "consulting",
+  "learning",
   "fitness",
   "diet",
   "entertainment"

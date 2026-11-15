@@ -1,4 +1,3 @@
-import crypto from "node:crypto";
 import { afterEach, describe, expect, it } from "vitest";
 import { createTestApp, type TestAppContext } from "../helpers/test-app";
 
@@ -13,7 +12,7 @@ function headers(token: string) {
   return { host: "127.0.0.1:4317", "x-app-token": token };
 }
 
-describe("development and consulting modules", () => {
+describe("development and learning modules", () => {
   it("maintains dev projects, items, milestones and work logs", async () => {
     context = await createTestApp();
     const projectResponse = await context.app.inject({
@@ -76,97 +75,109 @@ describe("development and consulting modules", () => {
     });
   });
 
-  it("keeps consulting clients, projects, sessions and follow-up actions linked", async () => {
+  it("links learning goals, stages, daily tasks and progress logs", async () => {
     context = await createTestApp();
-    const clientResponse = await context.app.inject({
+    const goalResponse = await context.app.inject({
       method: "POST",
-      url: "/api/consulting/clients",
+      url: "/api/learning/goals",
       headers: headers(context.token),
       payload: {
-        name: "林先生",
-        contactNotes: "周末联系",
-        direction: "产品咨询",
-        status: "active"
-      }
-    });
-    const client = clientResponse.json() as { id: string };
-    const projectResponse = await context.app.inject({
-      method: "POST",
-      url: "/api/consulting/projects",
-      headers: headers(context.token),
-      payload: {
-        clientId: client.id,
-        name: "产品方向复盘",
-        goal: "确认下一阶段方向",
+        title: "掌握 TypeScript",
+        description: "完成基础与项目实践",
+        category: "技能",
         status: "active",
-        nextSessionAt: "2026-11-20T15:00",
-        feeStatus: "pending"
+        progress: 0
       }
     });
-    const project = projectResponse.json() as { id: string };
-    const session = await context.app.inject({
+    const goal = goalResponse.json() as { id: string };
+    const stageResponse = await context.app.inject({
       method: "POST",
-      url: "/api/consulting/sessions",
+      url: "/api/learning/stages",
       headers: headers(context.token),
       payload: {
-        projectId: project.id,
-        sessionDate: "2026-11-20",
-        durationMinutes: 60,
-        method: "线上",
-        topics: "产品方向",
-        conclusions: "确定测试方案"
+        goalId: goal.id,
+        title: "基础语法",
+        status: "in_progress",
+        position: 1,
+        notes: ""
       }
     });
-    const action = await context.app.inject({
+    const stage = stageResponse.json() as { id: string };
+    const taskResponse = await context.app.inject({
       method: "POST",
-      url: "/api/consulting/actions",
+      url: "/api/learning/tasks",
       headers: headers(context.token),
       payload: {
-        projectId: project.id,
-        title: "发送测试方案",
-        owner: "我",
-        dueDate: "2026-11-18"
+        goalId: goal.id,
+        stageId: stage.id,
+        title: "完成类型系统练习",
+        planDate: new Date().toISOString().slice(0, 10),
+        status: "todo",
+        estimatedMinutes: 45,
+        notes: ""
+      }
+    });
+    const task = taskResponse.json() as { id: string };
+    const logResponse = await context.app.inject({
+      method: "POST",
+      url: "/api/learning/logs",
+      headers: headers(context.token),
+      payload: {
+        goalId: goal.id,
+        taskId: task.id,
+        studyDate: new Date().toISOString().slice(0, 10),
+        durationMinutes: 45,
+        content: "完成泛型练习",
+        progressAfter: 35
       }
     });
     const bundle = await context.app.inject({
       method: "GET",
-      url: "/api/consulting",
+      url: "/api/learning",
+      headers: { host: "127.0.0.1:4317" }
+    });
+    const dashboard = await context.app.inject({
+      method: "GET",
+      url: "/api/dashboard",
       headers: { host: "127.0.0.1:4317" }
     });
 
-    expect(clientResponse.statusCode).toBe(201);
-    expect(projectResponse.statusCode).toBe(201);
-    expect(session.statusCode).toBe(201);
-    expect(action.statusCode).toBe(201);
+    expect(goalResponse.statusCode).toBe(201);
+    expect(stageResponse.statusCode).toBe(201);
+    expect(taskResponse.statusCode).toBe(201);
+    expect(logResponse.statusCode).toBe(201);
     expect(bundle.json()).toMatchObject({
-      clients: [expect.objectContaining({ name: "林先生" })],
-      projects: [expect.objectContaining({ name: "产品方向复盘", feeStatus: "pending" })],
-      sessions: [expect.objectContaining({ topics: "产品方向" })],
-      actions: [expect.objectContaining({ title: "发送测试方案" })]
+      goals: [expect.objectContaining({ title: "掌握 TypeScript", progress: 35 })],
+      stages: [expect.objectContaining({ title: "基础语法" })],
+      tasks: [expect.objectContaining({ title: "完成类型系统练习" })],
+      logs: [expect.objectContaining({ durationMinutes: 45, progressAfter: 35 })]
+    });
+    expect(dashboard.json().modules.learning).toMatchObject({
+      activeGoals: 1,
+      pendingTasks: 1,
+      weekMinutes: 45,
+      nextTask: {
+        title: "完成类型系统练习",
+        goalTitle: "掌握 TypeScript"
+      }
     });
   });
 
-  it("publishes consulting actions as today-plan sources", async () => {
+  it("publishes learning tasks as today-plan sources", async () => {
     context = await createTestApp();
-    const clientId = crypto.randomUUID();
-    const projectId = crypto.randomUUID();
-    const actionId = crypto.randomUUID();
     const now = new Date().toISOString();
+    const goalId = "learning-goal-test";
+    const taskId = "learning-task-test";
     context.app.localDatabase
       .prepare(
-        "INSERT INTO consulting_clients (id, name, created_at, updated_at) VALUES (?, ?, ?, ?)"
+        "INSERT INTO learning_goals (id, title, created_at, updated_at) VALUES (?, ?, ?, ?)"
       )
-      .run(clientId, "测试客户", now, now);
+      .run(goalId, "测试学习目标", now, now);
     context.app.localDatabase
       .prepare(
-        "INSERT INTO consulting_projects (id, client_id, name, created_at, updated_at) VALUES (?, ?, ?, ?, ?)"
+        "INSERT INTO learning_tasks (id, goal_id, title, created_at, updated_at) VALUES (?, ?, ?, ?, ?)"
       )
-      .run(projectId, clientId, "测试项目", now, now);
-    context.app.localDatabase
-      .prepare(
-        "INSERT INTO consulting_actions (id, project_id, title, created_at, updated_at) VALUES (?, ?, ?, ?, ?)"
-      )
-      .run(actionId, projectId, "发送会议材料", now, now);
+      .run(taskId, goalId, "阅读一章", now, now);
 
     const sources = await context.app.inject({
       method: "GET",
@@ -177,9 +188,9 @@ describe("development and consulting modules", () => {
     expect(sources.json().items).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          module: "consulting",
-          id: actionId,
-          title: "发送会议材料"
+          module: "learning",
+          id: taskId,
+          title: "阅读一章"
         })
       ])
     );

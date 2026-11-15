@@ -50,3 +50,45 @@ test("requires the exact confirmation phrase before clearing all data", async ({
   await page.getByRole("button", { name: "取消" }).click();
   await expect(page.getByRole("button", { name: "确认清空" })).toBeHidden();
 });
+
+test("applies all four global font sizes and keeps the selection", async ({ page }) => {
+  await page.goto("/settings");
+  await expect(page.getByLabel("界面字号").locator("option")).toHaveText([
+    "小",
+    "中",
+    "大",
+    "特大"
+  ]);
+  const before = await page.locator(".nav-item").first().evaluate((element) =>
+    Number.parseFloat(getComputedStyle(element).fontSize)
+  );
+  await page.getByLabel("界面字号").selectOption("large");
+  await page.getByRole("button", { name: "保存设置" }).click();
+  await expect
+    .poll(() =>
+      page.locator(".nav-item").first().evaluate((element) =>
+        Number.parseFloat(getComputedStyle(element).fontSize)
+      )
+    )
+    .toBeGreaterThan(before);
+  await page.reload();
+  await expect(page.getByLabel("界面字号")).toHaveValue("large");
+
+  await page.getByLabel("界面字号").selectOption("small");
+  await page.getByRole("button", { name: "保存设置" }).click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.fontSize))
+    .toBe("small");
+});
+
+test("reports an invalid backup with a specific error message", async ({ page }) => {
+  await page.goto("/settings");
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "broken.txt",
+    mimeType: "text/plain",
+    buffer: Buffer.from("not a backup")
+  });
+  await expect(
+    page.locator(".toast").getByText("导入文件不是有效的备份压缩包")
+  ).toBeVisible();
+});

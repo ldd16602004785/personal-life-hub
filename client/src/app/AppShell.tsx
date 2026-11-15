@@ -5,7 +5,7 @@ import {
   Gamepad2,
   HandHeart,
   LayoutDashboard,
-  MessagesSquare,
+  BookOpenCheck,
   SunMedium,
   Utensils
 } from "lucide-react";
@@ -32,7 +32,7 @@ const navigation = [
     label: "工作",
     items: [
       { to: "/dev", label: "开发工作", icon: Code2 },
-      { to: "/consulting", label: "咨询工作", icon: MessagesSquare }
+      { to: "/learning", label: "学习计划", icon: BookOpenCheck }
     ]
   },
   {
@@ -86,6 +86,11 @@ export function AppShell() {
       navigate(defaultPage, { replace: true });
     }
   }, [bootstrap.data?.settings.defaultPage, bootstrap.isSuccess, location.pathname, navigate]);
+
+  useEffect(() => {
+    const fontSize = bootstrap.data?.settings.fontSize ?? "small";
+    document.documentElement.dataset.fontSize = fontSize;
+  }, [bootstrap.data?.settings.fontSize]);
 
   return (
     <div className="app-shell">
@@ -166,7 +171,7 @@ const pageInfoMap: Record<string, { title: string; description: string }> = {
   "/today": { title: "把注意力留给真正重要的事", description: "今日计划" },
   "/care": { title: "把重要的日子和一起经历的小事留下来", description: "关怀对象" },
   "/dev": { title: "按项目推进任务、问题与工作记录", description: "开发工作" },
-  "/consulting": { title: "每次咨询有上下文，行动项能够继续跟进", description: "咨询工作" },
+  "/learning": { title: "把学习目标拆成阶段与每天能完成的任务", description: "学习计划" },
   "/fitness": { title: "按训练日执行，并用实际数据留下记录", description: "健身计划" },
   "/diet": { title: "记录每天怎么吃，也管理接下来的采购", description: "饮食计划" },
   "/entertainment": { title: "给想玩的、在玩的和已完成的留一个位置", description: "游戏娱乐" },

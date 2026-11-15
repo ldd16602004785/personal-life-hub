@@ -44,7 +44,7 @@ export async function createBackup(
       schemaVersion: schema.version,
       createdAt,
       reason,
-      appVersion: "1.0.0"
+      appVersion: "2.0.0"
     };
     const zip = new AdmZip();
     zip.addFile("manifest.json", Buffer.from(JSON.stringify(manifest, null, 2)));
@@ -130,17 +130,26 @@ export async function restoreBackupPackage(
   let movedAttachments = false;
 
   try {
-    const zip = new AdmZip(zipPath);
-    const unsafeEntry = zip
-      .getEntries()
-      .find((entry) => {
-        const normalized = entry.entryName.replace(/\\/g, "/");
-        return normalized.startsWith("/") || normalized.split("/").includes("..");
-      });
-    if (unsafeEntry) {
-      throw new AppError(400, "INVALID_BACKUP", "备份包含不安全的文件路径");
+    try {
+      const zip = new AdmZip(zipPath);
+      const unsafeEntry = zip
+        .getEntries()
+        .find((entry) => {
+          const normalized = entry.entryName.replace(/\\/g, "/");
+          return normalized.startsWith("/") || normalized.split("/").includes("..");
+        });
+      if (unsafeEntry) {
+        throw new AppError(400, "INVALID_BACKUP", "备份包含不安全的文件路径");
+      }
+      zip.extractAllTo(stageDir, true);
+    } catch (error) {
+      if (error instanceof AppError) throw error;
+      throw new AppError(
+        400,
+        "INVALID_BACKUP",
+        "备份文件无效，请选择有效的 .zip 备份包"
+      );
     }
-    zip.extractAllTo(stageDir, true);
     validateExtractedBackup(stageDir);
 
     if (fs.existsSync(config.databasePath)) {

@@ -20,7 +20,7 @@ test("data remains after clearing browser storage and opening a fresh browser co
 
   const freshContext = await browser.newContext();
   const freshPage = await freshContext.newPage();
-  await freshPage.goto("http://127.0.0.1:4318/");
+  await freshPage.goto("http://127.0.0.1:4320/");
   await expect(freshPage.getByText(content)).toBeVisible();
   await freshContext.close();
 });
@@ -39,8 +39,8 @@ test("all runtime requests stay inside the local application origin", async ({ p
     if (message.type() === "error") runtimeErrors.push(message.text());
   });
 
-  for (const route of ["/", "/care", "/dev", "/consulting", "/fitness", "/diet", "/entertainment", "/settings"]) {
-    await page.goto(`http://127.0.0.1:4318${route}`);
+  for (const route of ["/", "/care", "/dev", "/learning", "/fitness", "/diet", "/entertainment", "/settings"]) {
+    await page.goto(`http://127.0.0.1:4320${route}`);
     await expect(page.locator("main")).toBeVisible();
   }
 

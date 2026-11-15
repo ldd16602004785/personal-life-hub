@@ -20,6 +20,10 @@ test("creates a workout template, starts it and records actual training", async 
   await page.getByRole("button", { name: "完成杠铃深蹲" }).click();
   await page.getByRole("button", { name: "完成训练" }).click();
   await expect(page.getByText("已完成").first()).toBeVisible();
+  await expect(page.getByRole("button", { name: "删除当前训练记录" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /删除历史训练记录：/ })
+  ).toBeVisible();
 
   const metricPanel = page.locator("section.panel").filter({
     has: page.getByRole("heading", { name: "身体记录" })

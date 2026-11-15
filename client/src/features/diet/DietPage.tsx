@@ -3,7 +3,7 @@ import { Check, Droplets, Plus, ShoppingBasket, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useUI } from "../../app/UIProvider";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
-import { DetailDrawer } from "../../components/DetailDrawer";
+import { DetailDialog } from "../../components/DetailDialog";
 import { ProgressBar } from "../../components/ProgressBar";
 import { apiRequest } from "../../lib/api";
 import { localDateString } from "../../lib/dates";
@@ -188,11 +188,11 @@ export function DietPage() {
         </div>
       </div>
 
-      <DetailDrawer open={Boolean(editor)} onOpenChange={(open) => { if (!open) setEditor(null); }} title={dietEditorTitle(editor)} description="饮食记录保存在本地文件中">
+      <DetailDialog open={Boolean(editor)} onOpenChange={(open) => { if (!open) setEditor(null); }} title={dietEditorTitle(editor)} description="饮食记录保存在本地文件中">
         {editor?.kind === "plan" ? <MealPlanForm date={date} meal={editor.mealType ?? "lunch"} item={editor.item} onSave={savePlan} /> : null}
         {editor?.kind === "log" ? <MealLogForm date={date} meal={editor.mealType ?? "lunch"} item={editor.item} recentMeals={diet.data.recentMeals} onSave={saveLog} /> : null}
         {editor?.kind === "shopping" ? <ShoppingForm onSave={saveShopping} /> : null}
-      </DetailDrawer>
+      </DetailDialog>
       <ConfirmDialog open={Boolean(deleteTarget)} onOpenChange={(open) => { if (!open) setDeleteTarget(null); }} title="确认删除？" description={deleteTarget?.kind === "plan" ? `“${deleteTarget.title}”将被永久删除。已加入今日计划的记录会保留标题快照并标记“来源已删除”。` : `“${deleteTarget?.title ?? ""}”将被永久删除。`} confirmLabel="删除" danger onConfirm={() => void confirmDelete()} />
     </div>
   );

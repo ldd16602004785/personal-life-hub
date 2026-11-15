@@ -325,6 +325,73 @@ const migrations: Migration[] = [
         created_at TEXT NOT NULL
       );
     `
+  },
+  {
+    version: 2,
+    name: "learning_plan_module",
+    sql: `
+      CREATE TABLE learning_goals (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        description TEXT NOT NULL DEFAULT '',
+        category TEXT NOT NULL DEFAULT '',
+        status TEXT NOT NULL DEFAULT 'active',
+        start_date TEXT,
+        target_date TEXT,
+        progress INTEGER NOT NULL DEFAULT 0 CHECK (progress BETWEEN 0 AND 100),
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+
+      CREATE TABLE learning_stages (
+        id TEXT PRIMARY KEY,
+        goal_id TEXT NOT NULL REFERENCES learning_goals(id) ON DELETE CASCADE,
+        title TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'planning',
+        position INTEGER NOT NULL DEFAULT 0,
+        notes TEXT NOT NULL DEFAULT '',
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+      CREATE INDEX idx_learning_stages_goal ON learning_stages(goal_id);
+
+      CREATE TABLE learning_tasks (
+        id TEXT PRIMARY KEY,
+        goal_id TEXT NOT NULL REFERENCES learning_goals(id) ON DELETE CASCADE,
+        stage_id TEXT REFERENCES learning_stages(id) ON DELETE SET NULL,
+        title TEXT NOT NULL,
+        plan_date TEXT,
+        status TEXT NOT NULL DEFAULT 'todo',
+        estimated_minutes INTEGER,
+        notes TEXT NOT NULL DEFAULT '',
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+      CREATE INDEX idx_learning_tasks_goal ON learning_tasks(goal_id);
+      CREATE INDEX idx_learning_tasks_date ON learning_tasks(plan_date);
+
+      CREATE TABLE learning_logs (
+        id TEXT PRIMARY KEY,
+        goal_id TEXT NOT NULL REFERENCES learning_goals(id) ON DELETE CASCADE,
+        task_id TEXT REFERENCES learning_tasks(id) ON DELETE SET NULL,
+        study_date TEXT NOT NULL,
+        duration_minutes INTEGER NOT NULL,
+        content TEXT NOT NULL DEFAULT '',
+        progress_after INTEGER CHECK (progress_after BETWEEN 0 AND 100),
+        created_at TEXT NOT NULL
+      );
+
+      UPDATE day_plans
+      SET source_type = 'custom',
+          source_module = NULL,
+          source_id = NULL,
+          source_title = title
+      WHERE source_module = 'consulting';
+
+      UPDATE settings
+      SET value = '/learning', updated_at = datetime('now')
+      WHERE key = 'defaultPage' AND value = '/consulting';
+    `
   }
 ];
 

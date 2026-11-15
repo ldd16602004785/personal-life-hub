@@ -3,7 +3,7 @@ import { BookOpen, Film, Gamepad2, Pencil, Plus, Sparkles, Trash2 } from "lucide
 import { useMemo, useState } from "react";
 import { useUI } from "../../app/UIProvider";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
-import { DetailDrawer } from "../../components/DetailDrawer";
+import { DetailDialog } from "../../components/DetailDialog";
 import { EmptyState } from "../../components/EmptyState";
 import { ProgressBar } from "../../components/ProgressBar";
 import { apiRequest } from "../../lib/api";
@@ -195,10 +195,10 @@ export function EntertainmentPage() {
           })}
         </div>
       </section>
-      <DetailDrawer open={Boolean(editor)} onOpenChange={(open) => { if (!open) setEditor(null); }} title={editor?.kind === "log" ? `记录《${editor.item.name}》` : editor?.item ? "编辑娱乐项目" : "添加娱乐项目"} description="娱乐项目与体验记录保存在本地文件中">
+      <DetailDialog open={Boolean(editor)} onOpenChange={(open) => { if (!open) setEditor(null); }} title={editor?.kind === "log" ? `记录《${editor.item.name}》` : editor?.item ? "编辑娱乐项目" : "添加娱乐项目"} description="娱乐项目与体验记录保存在本地文件中">
         {editor?.kind === "item" ? <ItemForm item={editor.item} onSave={saveItem} /> : null}
         {editor?.kind === "log" ? <LogForm item={editor.item} onSave={saveLog} /> : null}
-      </DetailDrawer>
+      </DetailDialog>
       <ConfirmDialog open={Boolean(deleteTarget)} onOpenChange={(open) => { if (!open) setDeleteTarget(null); }} title="确认删除？" description={deleteTarget?.kind === "item" ? `“${deleteTarget.title}”将被永久删除。已加入今日计划的记录会保留标题快照并标记“来源已删除”。` : `“${deleteTarget?.title ?? ""}”将被永久删除。`} confirmLabel="删除" danger onConfirm={() => void confirmDelete()} />
     </div>
   );

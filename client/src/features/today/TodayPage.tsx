@@ -1,12 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, Plus, Trash2 } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useUI } from "../../app/UIProvider";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
-import { DetailDrawer } from "../../components/DetailDrawer";
+import { DetailDialog } from "../../components/DetailDialog";
 import { EmptyState } from "../../components/EmptyState";
 import { ProgressBar } from "../../components/ProgressBar";
 import { apiRequest } from "../../lib/api";
@@ -30,6 +30,8 @@ export function TodayPage() {
   const [title, setTitle] = useState("");
   const [time, setTime] = useState("");
   const [sourceKey, setSourceKey] = useState("");
+  const [formError, setFormError] = useState("");
+  const titleInputRef = useRef<HTMLInputElement>(null);
   const [selected, setSelected] = useState<DayPlan | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<DayPlan | null>(null);
   const [statusFilter, setStatusFilter] = useState("all");
@@ -91,6 +93,7 @@ export function TodayPage() {
       setTitle("");
       setTime("");
       setSourceKey("");
+      setFormError("");
       notify("已加入今日计划");
       refresh();
     },
@@ -133,7 +136,12 @@ export function TodayPage() {
 
   function submit(event: FormEvent) {
     event.preventDefault();
-    if (!title.trim() && !sourceKey) return;
+    if (!title.trim() && !sourceKey) {
+      setFormError("请输入事项标题，或先从模块选择一项");
+      titleInputRef.current?.focus();
+      return;
+    }
+    setFormError("");
     create.mutate();
   }
 
@@ -177,11 +185,14 @@ export function TodayPage() {
       <form className="quick-entry" onSubmit={submit}>
         <input
           aria-label="添加今日事项"
+          aria-invalid={Boolean(formError)}
           onChange={(event) => {
             setTitle(event.target.value);
             setSourceKey("");
+            setFormError("");
           }}
           placeholder="添加一件只属于今天的事…"
+          ref={titleInputRef}
           value={title}
         />
         <input
@@ -207,6 +218,11 @@ export function TodayPage() {
           加入今天
         </button>
       </form>
+      {formError ? (
+        <p className="form-error" role="alert">
+          {formError}
+        </p>
+      ) : null}
 
       <section className="panel">
         <div className="panel-head">
@@ -281,7 +297,7 @@ export function TodayPage() {
         </div>
       </section>
 
-      <DetailDrawer
+      <DetailDialog
         open={Boolean(selected)}
         onOpenChange={(open) => {
           if (!open) setSelected(null);
@@ -327,7 +343,7 @@ export function TodayPage() {
             保存修改
           </button>
         </form>
-      </DetailDrawer>
+      </DetailDialog>
 
       <ConfirmDialog
         open={Boolean(deleteTarget)}

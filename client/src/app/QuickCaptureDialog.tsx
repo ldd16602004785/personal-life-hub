@@ -11,7 +11,7 @@ type CaptureTarget =
   | "today"
   | "care"
   | "dev"
-  | "consulting"
+  | "learning"
   | "fitness"
   | "diet"
   | "entertainment";
@@ -21,7 +21,7 @@ const targets: Array<{ value: CaptureTarget; label: string; title: string; hint:
   { value: "today", label: "今日计划", title: "添加今日安排", hint: "只需先写清楚要做什么" },
   { value: "care", label: "关怀对象", title: "记录与 TA 有关的事", hint: "可以之后补充日期、地点和照片" },
   { value: "dev", label: "开发工作", title: "添加开发事项", hint: "先记录问题或想法" },
-  { value: "consulting", label: "咨询工作", title: "添加咨询行动项", hint: "先记录需要跟进的事" },
+  { value: "learning", label: "学习计划", title: "添加学习任务", hint: "先记录今天要学什么" },
   { value: "fitness", label: "健身计划", title: "添加训练", hint: "先写下训练名称" },
   { value: "diet", label: "饮食计划", title: "添加饮食记录", hint: "先记录吃了什么或准备吃什么" },
   { value: "entertainment", label: "游戏娱乐", title: "添加娱乐项目", hint: "想玩的游戏、影视或书籍" }
@@ -89,20 +89,23 @@ export function QuickCaptureDialog({
           })
         });
       }
-      if (target === "consulting") {
+      if (target === "learning") {
         const data = await apiRequest<{
-          projects: Array<{ id: string }>;
-        }>("/api/consulting");
-        const projectId = data.projects[0]?.id;
-        if (!projectId) throw new Error("请先在咨询工作建立咨询项目");
-        return apiRequest("/api/consulting/actions", {
+          goals: Array<{ id: string }>;
+          stages: Array<{ id: string; goalId: string }>;
+        }>("/api/learning");
+        const goalId = data.goals[0]?.id;
+        if (!goalId) throw new Error("请先在学习计划建立学习目标");
+        const stageId = data.stages.find((stage) => stage.goalId === goalId)?.id ?? null;
+        return apiRequest("/api/learning/tasks", {
           method: "POST",
           body: JSON.stringify({
-            projectId,
+            goalId,
+            stageId,
             title: title.trim(),
-            owner: "",
-            dueDate: null,
-            completed: false
+            planDate: localDateString(),
+            status: "todo",
+            notes: notes.trim()
           })
         });
       }
@@ -145,15 +148,17 @@ export function QuickCaptureDialog({
       throw new Error(`${current.label}的完整记录表单将在该模块阶段接入`);
     },
     onMutate: () => setSaving(),
-    onSuccess: () => {
+    onSuccess: async () => {
       setSaved();
       notify("记录已保存到本地");
-      void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
-      void queryClient.invalidateQueries({ queryKey: ["memos"] });
-      void queryClient.invalidateQueries({ queryKey: ["day-plans"] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["dashboard"] }),
+        queryClient.invalidateQueries({ queryKey: ["memos"] }),
+        queryClient.invalidateQueries({ queryKey: ["day-plans"] })
+      ]);
       void queryClient.invalidateQueries({ queryKey: ["care"] });
       void queryClient.invalidateQueries({ queryKey: ["dev"] });
-      void queryClient.invalidateQueries({ queryKey: ["consulting"] });
+      void queryClient.invalidateQueries({ queryKey: ["learning"] });
       void queryClient.invalidateQueries({ queryKey: ["fitness"] });
       void queryClient.invalidateQueries({ queryKey: ["diet"] });
       void queryClient.invalidateQueries({ queryKey: ["entertainment"] });
@@ -162,7 +167,7 @@ export function QuickCaptureDialog({
       onOpenChange(false);
     },
     onError: (error) => {
-      setSaveError();
+      setSaveError(error.message);
       notify(error.message, "error");
     }
   });

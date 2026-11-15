@@ -42,7 +42,8 @@ describe("data status, settings and clearing", () => {
         weekStartsOn: "0",
         defaultPage: "/today",
         backupRetention: 7,
-        waterTargetMl: 2500
+        waterTargetMl: 2500,
+        fontSize: "large"
       }
     });
 
@@ -51,7 +52,8 @@ describe("data status, settings and clearing", () => {
       weekStartsOn: "0",
       defaultPage: "/today",
       backupRetention: "7",
-      waterTargetMl: "2500"
+      waterTargetMl: "2500",
+      fontSize: "large"
     });
   });
 

@@ -17,3 +17,12 @@ export function formatShortDate(dateValue: string): string {
     day: "numeric"
   }).format(date);
 }
+
+export function formatFullDate(dateValue: string): string {
+  const date = new Date(`${dateValue}T12:00:00`);
+  return new Intl.DateTimeFormat("zh-CN", {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  }).format(date);
+}

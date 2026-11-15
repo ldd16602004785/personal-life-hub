@@ -16,9 +16,7 @@ const sourceDefinitions: Record<ModuleSource, SourceDefinition[]> = {
     { table: "care_dates", titleColumn: "name", label: "重要日期" }
   ],
   dev: [{ table: "dev_items", titleColumn: "title", label: "开发事项" }],
-  consulting: [
-    { table: "consulting_actions", titleColumn: "title", label: "咨询行动项" }
-  ],
+  learning: [{ table: "learning_tasks", titleColumn: "title", label: "学习任务" }],
   fitness: [
     { table: "fitness_templates", titleColumn: "name", label: "训练计划" }
   ],

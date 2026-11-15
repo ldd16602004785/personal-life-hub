@@ -143,4 +143,22 @@ describe("care module", () => {
       ])
     );
   });
+
+  it("rejects a decimal wish budget because budgets must be whole yuan", async () => {
+    context = await createTestApp();
+    const response = await context.app.inject({
+      method: "POST",
+      url: "/api/care/wishes",
+      headers: headers(context.token),
+      payload: {
+        title: "一起看日落",
+        type: "wish",
+        status: "idea",
+        budget: 199.5,
+        notes: ""
+      }
+    });
+
+    expect(response.statusCode).toBe(400);
+  });
 });

@@ -13,10 +13,10 @@ import {
 import { useMemo, useState } from "react";
 import { useUI } from "../../app/UIProvider";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
-import { DetailDrawer } from "../../components/DetailDrawer";
+import { DetailDialog } from "../../components/DetailDialog";
 import { EmptyState } from "../../components/EmptyState";
 import { apiRequest } from "../../lib/api";
-import { formatShortDate, localDateString } from "../../lib/dates";
+import { formatFullDate, formatShortDate, localDateString } from "../../lib/dates";
 import type {
   CareData,
   CareDate,
@@ -307,9 +307,8 @@ export function CarePage() {
                       {story.photoUrl ? (
                         <img className="story-photo" src={story.photoUrl} alt={`趣事照片：${story.title}`} />
                       ) : (
-                        <div className="story-date">
-                          <strong>{formatShortDate(story.happenedOn)}</strong>
-                          <span>{story.tag || "日常"}</span>
+                        <div className="story-media-placeholder" aria-hidden="true">
+                          <CalendarHeart size={18} />
                         </div>
                       )}
                       <div className="story-copy">
@@ -317,6 +316,7 @@ export function CarePage() {
                           <strong>{story.title}</strong>
                           {story.tag ? <span className="mini-badge">{story.tag}</span> : null}
                         </div>
+                        <span className="story-full-date">{formatFullDate(story.happenedOn)}</span>
                         <p>{story.content}</p>
                         <div className="row-actions">
                           {story.location ? <span className="meta-text"><MapPin size={11} /> {story.location}</span> : null}
@@ -402,7 +402,7 @@ export function CarePage() {
                     <button className={`check-button${wish.status === "completed" ? " checked" : ""}`} aria-label={wish.status === "completed" ? "恢复小心愿" : "完成小心愿"} onClick={() => void toggleWish(wish)} type="button">{wish.status === "completed" ? <Check size={12} /> : null}</button>
                     <button className="wish-copy" onClick={() => setEditor({ kind: "wish", item: wish })} type="button">
                       <strong>{wish.title}</strong>
-                      <span>{wish.targetDate ?? "没有目标日期"} · {wishStatusLabel(wish.status)}</span>
+                      <span>{wish.targetDate ?? "没有目标日期"} · {wishStatusLabel(wish.status)}{wish.budget !== null ? ` · ¥${wish.budget}` : ""}</span>
                     </button>
                     <button className="tiny-text-button" onClick={() => void addWishToToday(wish)} type="button">安排</button>
                     <button className="icon-text-button" aria-label={`删除小心愿：${wish.title}`} onClick={() => setDeleteTarget({ kind: "wish", id: wish.id, title: wish.title })} type="button"><Trash2 size={12} /></button>
@@ -414,7 +414,7 @@ export function CarePage() {
         </div>
       </div>
 
-      <DetailDrawer
+      <DetailDialog
         open={editor !== null}
         onOpenChange={(open) => {
           if (!open) setEditor(null);
@@ -427,7 +427,7 @@ export function CarePage() {
         {editor?.kind === "story" ? <StoryForm item={editor.item} onSave={saveStory} /> : null}
         {editor?.kind === "preference" ? <PreferenceForm onSave={savePreference} /> : null}
         {editor?.kind === "wish" ? <WishForm item={editor.item} onSave={saveWish} /> : null}
-      </DetailDrawer>
+      </DetailDialog>
 
       <ConfirmDialog
         open={Boolean(deleteTarget)}
@@ -531,7 +531,7 @@ function WishForm({
     targetDate: item?.targetDate ?? null,
     notes: item?.notes ?? ""
   });
-  return <form className="form-stack" onSubmit={(event) => { event.preventDefault(); void onSave(form); }}><label className="field"><span>心愿或礼物</span><input required value={form.title} onChange={(event) => setForm({ ...form, title: event.target.value })} /></label><label className="field"><span>类型</span><select value={form.type} onChange={(event) => setForm({ ...form, type: event.target.value as CareWish["type"] })}><option value="wish">愿望</option><option value="gift">礼物</option><option value="date">约会计划</option><option value="other">其他</option></select></label><label className="field"><span>状态</span><select value={form.status} onChange={(event) => setForm({ ...form, status: event.target.value as CareWish["status"] })}><option value="idea">想法</option><option value="planning">准备中</option><option value="completed">已完成</option></select></label><label className="field"><span>目标日期</span><input type="date" value={form.targetDate ?? ""} onChange={(event) => setForm({ ...form, targetDate: event.target.value || null })} /></label><label className="field"><span>预算（可选）</span><input min={0} step="0.01" type="number" value={form.budget ?? ""} onChange={(event) => setForm({ ...form, budget: event.target.value ? Number(event.target.value) : null })} /></label><label className="field"><span>备注</span><textarea value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} /></label><button className="button primary" type="submit">保存小心愿</button></form>;
+  return <form className="form-stack" onSubmit={(event) => { event.preventDefault(); void onSave(form); }}><label className="field"><span>心愿或礼物</span><input required value={form.title} onChange={(event) => setForm({ ...form, title: event.target.value })} /></label><label className="field"><span>类型</span><select value={form.type} onChange={(event) => setForm({ ...form, type: event.target.value as CareWish["type"] })}><option value="wish">愿望</option><option value="gift">礼物</option><option value="date">约会计划</option><option value="other">其他</option></select></label><label className="field"><span>状态</span><select value={form.status} onChange={(event) => setForm({ ...form, status: event.target.value as CareWish["status"] })}><option value="idea">想法</option><option value="planning">准备中</option><option value="completed">已完成</option></select></label><label className="field"><span>目标日期</span><input type="date" value={form.targetDate ?? ""} onChange={(event) => setForm({ ...form, targetDate: event.target.value || null })} /></label><label className="field"><span>预算（整数元，可选）</span><input min={0} step="1" type="number" value={form.budget ?? ""} onChange={(event) => setForm({ ...form, budget: event.target.value ? Number(event.target.value) : null })} /></label><label className="field"><span>备注</span><textarea value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} /></label><button className="button primary" type="submit">保存小心愿</button></form>;
 }
 
 function editorTitle(editor: Editor) {

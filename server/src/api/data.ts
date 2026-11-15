@@ -19,6 +19,10 @@ const businessTables = [
   "consulting_projects",
   "consulting_sessions",
   "consulting_actions",
+  "learning_goals",
+  "learning_stages",
+  "learning_tasks",
+  "learning_logs",
   "fitness_templates",
   "fitness_template_exercises",
   "fitness_sessions",
@@ -67,7 +71,8 @@ export function registerDataRoutes(app: FastifyInstance): void {
         weekStartsOn: "1",
         defaultPage: "/",
         backupRetention: "30",
-        waterTargetMl: "2000"
+        waterTargetMl: "2000",
+        fontSize: "small"
       };
       const update = app.localDatabase.prepare(
         "INSERT INTO settings (key, value, updated_at) VALUES (?, ?, ?) " +

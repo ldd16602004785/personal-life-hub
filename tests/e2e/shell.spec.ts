@@ -5,7 +5,7 @@ const pages = [
   ["今日计划", "/today"],
   ["关怀对象", "/care"],
   ["开发工作", "/dev"],
-  ["咨询工作", "/consulting"],
+  ["学习计划", "/learning"],
   ["健身计划", "/fitness"],
   ["饮食计划", "/diet"],
   ["游戏娱乐", "/entertainment"],
@@ -34,7 +34,7 @@ test("opens quick capture with every first-version destination", async ({ page }
     "今日计划",
     "关怀对象",
     "开发工作",
-    "咨询工作",
+    "学习计划",
     "健身计划",
     "饮食计划",
     "游戏娱乐"

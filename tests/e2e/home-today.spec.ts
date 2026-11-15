@@ -56,3 +56,13 @@ test("edits a memo and keeps the edited text after reload", async ({ page }) => 
   await page.reload();
   await expect(page.getByText(edited, { exact: true })).toBeVisible();
 });
+
+test("shows a clear validation message when today's plan title is empty", async ({ page }) => {
+  await page.goto("/today");
+  await page.getByRole("button", { name: "加入今天" }).click();
+  await expect(
+    page.getByText("请输入事项标题，或先从模块选择一项")
+  ).toBeVisible();
+  await expect(page.getByLabel("添加今日事项")).toBeFocused();
+  await expect(page.getByLabel("添加今日事项")).toHaveAttribute("aria-invalid", "true");
+});

@@ -7,7 +7,7 @@ import {
   Dumbbell,
   Gamepad2,
   HandHeart,
-  MessagesSquare,
+  BookOpenCheck,
   Plus,
   Trash2,
   Utensils
@@ -15,7 +15,7 @@ import {
 import { useState, type FormEvent } from "react";
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { DetailDrawer } from "../../components/DetailDrawer";
+import { DetailDialog } from "../../components/DetailDialog";
 import { ProgressBar } from "../../components/ProgressBar";
 import { apiRequest } from "../../lib/api";
 import { formatClock } from "../../lib/dates";
@@ -277,20 +277,20 @@ export function HomePage() {
           tone="green"
         />
         <ModuleCard
-          icon={<MessagesSquare />}
-          title="咨询工作"
-          badge={`${data.modules.consulting.pendingActions} 项待跟进`}
+          icon={<BookOpenCheck />}
+          title="学习计划"
+          badge={`${data.modules.learning.pendingTasks} 项待完成`}
           summary={
-            data.modules.consulting.nextSession
-              ? `${data.modules.consulting.nextSession.clientName} · 下次咨询`
-              : "暂无下一次咨询"
+            data.modules.learning.nextTask
+              ? data.modules.learning.nextTask.title
+              : "还没有学习任务"
           }
           meta={
-            data.modules.consulting.nextSession
-              ? new Date(data.modules.consulting.nextSession.nextSessionAt).toLocaleString("zh-CN")
-              : "记录客户、咨询与行动项"
+            data.modules.learning.nextTask
+              ? `${data.modules.learning.nextTask.goalTitle} · ${data.modules.learning.nextTask.planDate ?? "待安排"}`
+              : `${data.modules.learning.activeGoals} 个进行中的学习目标`
           }
-          to="/consulting"
+          to="/learning"
           tone="purple"
         />
         <ModuleCard
@@ -329,7 +329,7 @@ export function HomePage() {
           tone="blue"
         />
       </div>
-      <DetailDrawer
+      <DetailDialog
         open={Boolean(editingMemo)}
         onOpenChange={(open) => {
           if (!open) setEditingMemo(null);
@@ -347,7 +347,7 @@ export function HomePage() {
             }}
           />
         ) : null}
-      </DetailDrawer>
+      </DetailDialog>
     </div>
   );
 }

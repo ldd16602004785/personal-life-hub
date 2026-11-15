@@ -11,7 +11,7 @@ import {
 import { useState } from "react";
 import { useUI } from "../../app/UIProvider";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
-import { DetailDrawer } from "../../components/DetailDrawer";
+import { DetailDialog } from "../../components/DetailDialog";
 import { EmptyState } from "../../components/EmptyState";
 import { apiRequest } from "../../lib/api";
 import { localDateString } from "../../lib/dates";
@@ -196,7 +196,7 @@ export function FitnessPage() {
             <div className="panel-body history-list">
               {fitness.data.sessions.length === 0 ? <div className="inline-empty">还没有历史记录。</div> : fitness.data.sessions.slice(0, 8).map((session) => {
                 const template = fitness.data.templates.find((item) => item.id === session.templateId);
-                return <div className="history-row" key={session.id}><span className={`history-dot ${session.status}`} /><div><strong>{template?.name ?? "自由训练"}</strong><span>{session.sessionDate} · {session.status === "completed" ? "已完成" : "进行中"}</span></div><span>{session.durationMinutes ?? "—"} 分钟</span><button className="icon-text-button" aria-label="删除训练记录" onClick={() => setDeleteTarget({ kind: "session", id: session.id, title: `${session.sessionDate} 训练` })} type="button"><Trash2 size={12} /></button></div>;
+                return <div className="history-row" key={session.id}><span className={`history-dot ${session.status}`} /><div><strong>{template?.name ?? "自由训练"}</strong><span>{session.sessionDate} · {session.status === "completed" ? "已完成" : "进行中"}</span></div><span>{session.durationMinutes ?? "—"} 分钟</span><button className="icon-text-button" aria-label={`删除历史训练记录：${session.sessionDate}`} onClick={() => setDeleteTarget({ kind: "session", id: session.id, title: `${session.sessionDate} 训练` })} type="button"><Trash2 size={12} /></button></div>;
               })}
             </div>
           </section>
@@ -226,10 +226,10 @@ export function FitnessPage() {
         </div>
       </div>
 
-      <DetailDrawer open={Boolean(editor)} onOpenChange={(open) => { if (!open) setEditor(null); }} title={editor?.kind === "metric" ? "记录身体数据" : editor?.item ? "编辑训练模板" : "新建训练模板"} description="训练与身体数据保存在本地文件中">
+      <DetailDialog open={Boolean(editor)} onOpenChange={(open) => { if (!open) setEditor(null); }} title={editor?.kind === "metric" ? "记录身体数据" : editor?.item ? "编辑训练模板" : "新建训练模板"} description="训练与身体数据保存在本地文件中">
         {editor?.kind === "template" ? <TemplateForm item={editor.item} onSave={saveTemplate} /> : null}
         {editor?.kind === "metric" ? <MetricForm onSave={saveMetric} /> : null}
-      </DetailDrawer>
+      </DetailDialog>
       <ConfirmDialog open={Boolean(deleteTarget)} onOpenChange={(open) => { if (!open) setDeleteTarget(null); }} title="确认删除？" description={deleteTarget?.kind === "template" ? `“${deleteTarget.title}”将被永久删除。已加入今日计划的记录会保留标题快照并标记“来源已删除”。` : `“${deleteTarget?.title ?? ""}”将被永久删除。`} confirmLabel="删除" danger onConfirm={() => void confirmDelete()} />
     </div>
   );
@@ -262,7 +262,7 @@ function SessionEditor({ session, onSave, onDelete }: { session: FitnessSession;
       <div className="row-actions">
         <button className="button secondary" onClick={() => void onSave({ durationMinutes: duration, feelNotes, status: "in_progress", exercises })} type="button">保存进度</button>
         <button className="button primary" onClick={() => void onSave({ durationMinutes: duration, feelNotes, status: "completed", exercises })} type="button"><Activity size={14} />完成训练</button>
-        <button className="icon-text-button" aria-label="删除训练记录" onClick={onDelete} type="button"><Trash2 size={14} /></button>
+        <button className="icon-text-button" aria-label="删除当前训练记录" onClick={onDelete} type="button"><Trash2 size={14} /></button>
       </div>
     </div>
   );
