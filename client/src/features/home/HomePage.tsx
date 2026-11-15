@@ -32,7 +32,10 @@ export function HomePage() {
     queryFn: getBootstrap,
     staleTime: Infinity
   });
-  const theme = bootstrap.data?.settings.homeTheme ?? "standard";
+  const theme =
+    bootstrap.data?.settings.uiTheme ??
+    bootstrap.data?.settings.homeTheme ??
+    "standard";
   const dashboard = useQuery({
     queryKey: ["dashboard"],
     queryFn: () => apiRequest<DashboardData>("/api/dashboard")

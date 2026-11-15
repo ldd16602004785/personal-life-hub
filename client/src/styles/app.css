@@ -2454,6 +2454,176 @@ textarea {
   }
 }
 
+.app-shell[data-ui-theme="weather"] .workspace {
+  background:
+    radial-gradient(circle at 82% 8%, rgba(255, 228, 175, 0.45), transparent 28%),
+    linear-gradient(155deg, #a8cce0 0%, #d6e6ed 52%, #f2e4c9 100%);
+}
+
+.app-shell[data-ui-theme="weather"][data-night-mode="true"] .workspace {
+  background:
+    radial-gradient(circle at 82% 8%, rgba(111, 84, 166, 0.28), transparent 30%),
+    linear-gradient(155deg, #172743 0%, #263652 52%, #3a2d43 100%);
+}
+
+.app-shell[data-ui-theme="weather"] .topbar {
+  border-bottom-color: light-dark(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.13));
+  background: light-dark(rgba(255, 255, 255, 0.28), rgba(16, 25, 40, 0.52));
+  backdrop-filter: blur(24px) saturate(150%);
+}
+
+.app-shell[data-ui-theme="weather"] .page-content {
+  background: transparent;
+}
+
+.app-shell[data-ui-theme="weather"] .panel,
+.app-shell[data-ui-theme="weather"] .module-card,
+.app-shell[data-ui-theme="weather"] .kanban-card,
+.app-shell[data-ui-theme="weather"] .meal-card,
+.app-shell[data-ui-theme="weather"] .media-card,
+.app-shell[data-ui-theme="weather"] .training-day,
+.app-shell[data-ui-theme="weather"] .stat-strip > div {
+  border-color: light-dark(rgba(255, 255, 255, 0.64), rgba(255, 255, 255, 0.17));
+  background: light-dark(rgba(255, 255, 255, 0.57), rgba(20, 31, 48, 0.58));
+  box-shadow: 0 8px 30px rgba(31, 55, 76, 0.12);
+  backdrop-filter: blur(28px) saturate(165%);
+}
+
+.app-shell[data-ui-theme="weather"] .page-content,
+.app-shell[data-ui-theme="weather"] .topbar {
+  color: light-dark(#243847, #f3f6fa);
+}
+
+.app-shell[data-ui-theme="notion"] .sidebar {
+  background: light-dark(#f7f7f5, #202020);
+  color: light-dark(#37352f, #f1f1ef);
+}
+
+.app-shell[data-ui-theme="notion"] .brand div span,
+.app-shell[data-ui-theme="notion"] .nav-label,
+.app-shell[data-ui-theme="notion"] .nav-item,
+.app-shell[data-ui-theme="notion"] .local-state {
+  color: light-dark(#787774, #9b9a97);
+}
+
+.app-shell[data-ui-theme="notion"] .nav-item:hover {
+  background: light-dark(#ebeae8, #2c2c2c);
+  color: light-dark(#37352f, #f1f1ef);
+}
+
+.app-shell[data-ui-theme="notion"] .nav-item.active {
+  background: light-dark(#e9e9e7, #2c2c2c);
+  color: light-dark(#37352f, #f1f1ef);
+}
+
+.app-shell[data-ui-theme="notion"] .local-state {
+  border-color: light-dark(#e9e9e7, #373737);
+}
+
+.app-shell[data-ui-theme="notion"] .workspace {
+  background: light-dark(#f7f7f5, #191919);
+}
+
+.app-shell[data-ui-theme="notion"] .topbar {
+  border-bottom-color: light-dark(#e9e9e7, #2f2f2f);
+  background: light-dark(#f7f7f5, #191919);
+}
+
+.app-shell[data-ui-theme="notion"] .page-content {
+  color: light-dark(#37352f, #f1f1ef);
+}
+
+.app-shell[data-ui-theme="notion"] .panel,
+.app-shell[data-ui-theme="notion"] .module-card,
+.app-shell[data-ui-theme="notion"] .kanban-card,
+.app-shell[data-ui-theme="notion"] .meal-card,
+.app-shell[data-ui-theme="notion"] .media-card,
+.app-shell[data-ui-theme="notion"] .training-day,
+.app-shell[data-ui-theme="notion"] .stat-strip > div {
+  border-color: light-dark(#e9e9e7, #2f2f2f);
+  border-radius: 7px;
+  background: light-dark(#ffffff, #202020);
+  box-shadow: none;
+}
+
+.app-shell[data-ui-theme="notion"] .button.primary {
+  border-color: light-dark(#37352f, #f1f1ef);
+  background: light-dark(#37352f, #f1f1ef);
+  color: light-dark(#ffffff, #191919);
+}
+
+.app-shell[data-ui-theme="notion"] .button.secondary,
+.app-shell[data-ui-theme="notion"] .icon-button {
+  border-color: light-dark(#dedddb, #383838);
+  background: light-dark(#ffffff, #252525);
+}
+
+.app-shell[data-ui-theme="bubu"] .sidebar {
+  background: light-dark(#5a4333, #2a2320);
+}
+
+.app-shell[data-ui-theme="bubu"] .workspace {
+  position: relative;
+  background:
+    radial-gradient(circle at 95% 8%, rgba(248, 222, 161, 0.35), transparent 25%),
+    linear-gradient(145deg, #fffdf8, #fff6e8 54%, #f7ede2);
+}
+
+.app-shell[data-ui-theme="bubu"][data-night-mode="true"] .workspace {
+  background:
+    radial-gradient(circle at 93% 10%, rgba(92, 66, 42, 0.4), transparent 27%),
+    linear-gradient(145deg, #1c1917, #251f1c 54%, #1b1816);
+}
+
+.app-shell[data-ui-theme="bubu"] .workspace::after {
+  position: fixed;
+  z-index: 0;
+  right: 22px;
+  bottom: 18px;
+  width: 170px;
+  height: 120px;
+  background: url("/assets/bubu/pair-table.png") center / contain no-repeat;
+  content: "";
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.app-shell[data-ui-theme="bubu"] .topbar,
+.app-shell[data-ui-theme="bubu"] .page-content {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
+.app-shell[data-ui-theme="bubu"] .topbar {
+  border-bottom-color: light-dark(#eadbc9, #48392e);
+}
+
+.app-shell[data-ui-theme="bubu"] .panel,
+.app-shell[data-ui-theme="bubu"] .module-card,
+.app-shell[data-ui-theme="bubu"] .kanban-card,
+.app-shell[data-ui-theme="bubu"] .meal-card,
+.app-shell[data-ui-theme="bubu"] .media-card,
+.app-shell[data-ui-theme="bubu"] .training-day,
+.app-shell[data-ui-theme="bubu"] .stat-strip > div {
+  border-color: light-dark(#f0dfc8, #4b3b2e);
+  border-radius: 16px;
+  background: light-dark(rgba(255, 255, 255, 0.78), rgba(38, 32, 28, 0.86));
+  box-shadow: 0 10px 28px rgba(106, 75, 48, 0.08);
+}
+
+.app-shell[data-ui-theme="bubu"] .button.primary {
+  border-color: #9d7657;
+  background: #9d7657;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-shell[data-ui-theme="weather"] *,
+  .app-shell[data-ui-theme="bubu"] * {
+    scroll-behavior: auto !important;
+  }
+}
+
 .training-week {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));

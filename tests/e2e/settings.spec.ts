@@ -93,20 +93,20 @@ test("reports an invalid backup with a specific error message", async ({ page })
   ).toBeVisible();
 });
 
-test("switches all home themes and applies night mode across the app", async ({ page }) => {
+test("switches all app themes and applies night mode globally", async ({ page }) => {
   await page.goto("/settings");
-  await expect(page.getByLabel("首页主题").locator("option")).toHaveText([
+  await expect(page.getByLabel("界面主题").locator("option")).toHaveText([
     "标准",
     "天气氛围",
     "Notion 笔记",
     "一二和布布"
   ]);
 
-  await page.getByLabel("首页主题").selectOption("weather");
+  await page.getByLabel("界面主题").selectOption("weather");
   await page.getByLabel("夜间模式").check();
   await page.getByRole("button", { name: "保存设置" }).click();
   await expect
-    .poll(() => page.evaluate(() => document.documentElement.dataset.homeTheme))
+    .poll(() => page.evaluate(() => document.documentElement.dataset.uiTheme))
     .toBe("weather");
   expect(
     await page.evaluate(() => document.documentElement.style.colorScheme)
@@ -114,37 +114,58 @@ test("switches all home themes and applies night mode across the app", async ({ 
 
   await page.goto("/");
   await expect(page.locator(".weather-home-hero")).toBeVisible();
+  await page.goto("/dev");
+  await expect(page.locator(".app-shell")).toHaveAttribute("data-ui-theme", "weather");
+  expect(
+    await page.locator(".workspace").evaluate((element) =>
+      getComputedStyle(element).backgroundImage
+    )
+  ).toContain("linear-gradient");
   await page.reload();
   expect(
     await page.evaluate(() => document.documentElement.style.colorScheme)
   ).toBe("dark");
 
   await page.goto("/settings");
-  await page.getByLabel("首页主题").selectOption("notion");
+  await page.getByLabel("界面主题").selectOption("notion");
   await page.getByRole("button", { name: "保存设置" }).click();
   await expect
-    .poll(() => page.evaluate(() => document.documentElement.dataset.homeTheme))
+    .poll(() => page.evaluate(() => document.documentElement.dataset.uiTheme))
     .toBe("notion");
   await page.goto("/");
   await expect(page.locator(".notion-database")).toBeVisible();
   await expect(page.getByRole("columnheader", { name: "模块" })).toBeVisible();
+  await page.goto("/fitness");
+  await expect(page.locator(".app-shell")).toHaveAttribute("data-ui-theme", "notion");
+  expect(
+    await page.locator(".panel").first().evaluate((element) =>
+      getComputedStyle(element).borderRadius
+    )
+  ).toBe("7px");
 
   await page.goto("/settings");
-  await page.getByLabel("首页主题").selectOption("bubu");
+  await page.getByLabel("界面主题").selectOption("bubu");
   await page.getByRole("button", { name: "保存设置" }).click();
   await expect
-    .poll(() => page.evaluate(() => document.documentElement.dataset.homeTheme))
+    .poll(() => page.evaluate(() => document.documentElement.dataset.uiTheme))
     .toBe("bubu");
   await page.goto("/");
   await expect(
     page.getByRole("img", { name: "一二和布布背着包一起散步" })
   ).toBeVisible();
+  await page.goto("/care");
+  await expect(page.locator(".app-shell")).toHaveAttribute("data-ui-theme", "bubu");
+  expect(
+    await page.locator(".workspace").evaluate((element) =>
+      getComputedStyle(element, "::after").backgroundImage
+    )
+  ).toContain("pair-table.png");
 
   await page.goto("/settings");
-  await page.getByLabel("首页主题").selectOption("standard");
+  await page.getByLabel("界面主题").selectOption("standard");
   await page.getByLabel("夜间模式").uncheck();
   await page.getByRole("button", { name: "保存设置" }).click();
   await expect
-    .poll(() => page.evaluate(() => document.documentElement.dataset.homeTheme))
+    .poll(() => page.evaluate(() => document.documentElement.dataset.uiTheme))
     .toBe("standard");
 });

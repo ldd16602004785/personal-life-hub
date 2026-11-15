@@ -392,6 +392,18 @@ const migrations: Migration[] = [
       SET value = '/learning', updated_at = datetime('now')
       WHERE key = 'defaultPage' AND value = '/consulting';
     `
+  },
+  {
+    version: 3,
+    name: "global_ui_theme",
+    sql: `
+      INSERT OR IGNORE INTO settings (key, value, updated_at)
+      SELECT 'uiTheme', value, updated_at
+      FROM settings
+      WHERE key = 'homeTheme';
+
+      DELETE FROM settings WHERE key = 'homeTheme';
+    `
   }
 ];
 

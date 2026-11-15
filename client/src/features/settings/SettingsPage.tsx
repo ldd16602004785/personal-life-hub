@@ -210,7 +210,7 @@ function SettingsForm({ values, onSave }: { values: Record<string, string>; onSa
     backupRetention: values.backupRetention ?? "30",
     waterTargetMl: values.waterTargetMl ?? "2000",
     fontSize: values.fontSize ?? "small",
-    homeTheme: values.homeTheme ?? "standard",
+    uiTheme: values.uiTheme ?? values.homeTheme ?? "standard",
     nightMode: values.nightMode === "true"
   });
   return (
@@ -220,7 +220,7 @@ function SettingsForm({ values, onSave }: { values: Record<string, string>; onSa
       <label className="field"><span>保留最近备份数</span><input max={365} min={1} type="number" value={form.backupRetention} onChange={(event) => setForm({ ...form, backupRetention: event.target.value })} /></label>
       <label className="field"><span>每日饮水目标（ml）</span><input max={10000} min={100} type="number" value={form.waterTargetMl} onChange={(event) => setForm({ ...form, waterTargetMl: event.target.value })} /></label>
       <label className="field"><span>界面字号</span><select value={form.fontSize} onChange={(event) => setForm({ ...form, fontSize: event.target.value })}><option value="small">小</option><option value="medium">中</option><option value="large">大</option><option value="xlarge">特大</option></select></label>
-      <label className="field"><span>首页主题</span><select value={form.homeTheme} onChange={(event) => setForm({ ...form, homeTheme: event.target.value })}><option value="standard">标准</option><option value="weather">天气氛围</option><option value="notion">Notion 笔记</option><option value="bubu">一二和布布</option></select></label>
+      <label className="field"><span>界面主题</span><select value={form.uiTheme} onChange={(event) => setForm({ ...form, uiTheme: event.target.value })}><option value="standard">标准</option><option value="weather">天气氛围</option><option value="notion">Notion 笔记</option><option value="bubu">一二和布布</option></select></label>
       <label className="checkbox-row"><input aria-label="夜间模式" checked={form.nightMode} onChange={(event) => setForm({ ...form, nightMode: event.target.checked })} type="checkbox" />夜间模式</label>
       <button className="button primary" type="submit"><Settings2 size={14} />保存设置</button>
     </form>

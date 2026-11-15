@@ -73,7 +73,7 @@ export function registerDataRoutes(app: FastifyInstance): void {
         backupRetention: "30",
         waterTargetMl: "2000",
         fontSize: "small",
-        homeTheme: "standard",
+        uiTheme: "standard",
         nightMode: "false"
       };
       const update = app.localDatabase.prepare(

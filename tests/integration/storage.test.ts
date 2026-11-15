@@ -41,7 +41,8 @@ describe("local storage initialization", () => {
     expect(response.headers["x-content-type-options"]).toBe("nosniff");
     expect(migrations).toEqual([
       { version: 1, name: "initial_schema" },
-      { version: 2, name: "learning_plan_module" }
+      { version: 2, name: "learning_plan_module" },
+      { version: 3, name: "global_ui_theme" }
     ]);
   });
 

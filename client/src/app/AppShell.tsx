@@ -62,6 +62,11 @@ export function AppShell() {
     staleTime: Infinity
   });
   const pageInfo = getPageInfo(location.pathname);
+  const uiTheme =
+    bootstrap.data?.settings.uiTheme ??
+    bootstrap.data?.settings.homeTheme ??
+    "standard";
+  const nightMode = bootstrap.data?.settings.nightMode === "true";
 
   useEffect(() => {
     if (bootstrap.isError && !hadConnectionError.current) {
@@ -90,19 +95,24 @@ export function AppShell() {
   useEffect(() => {
     const fontSize = bootstrap.data?.settings.fontSize ?? "small";
     document.documentElement.dataset.fontSize = fontSize;
-    document.documentElement.dataset.homeTheme =
-      bootstrap.data?.settings.homeTheme ?? "standard";
-    const nightMode = bootstrap.data?.settings.nightMode === "true";
+    document.documentElement.dataset.uiTheme = uiTheme;
     document.documentElement.dataset.nightMode = String(nightMode);
     document.documentElement.style.colorScheme = nightMode ? "dark" : "light";
   }, [
     bootstrap.data?.settings.fontSize,
+    bootstrap.data?.settings.uiTheme,
     bootstrap.data?.settings.homeTheme,
-    bootstrap.data?.settings.nightMode
+    bootstrap.data?.settings.nightMode,
+    nightMode,
+    uiTheme
   ]);
 
   return (
-    <div className="app-shell">
+    <div
+      className="app-shell"
+      data-ui-theme={uiTheme}
+      data-night-mode={String(nightMode)}
+    >
       <aside className="sidebar">
         <div className="brand">
           <span className="brand-mark" aria-hidden="true">

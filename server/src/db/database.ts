@@ -44,7 +44,7 @@ function seedSettings(database: Database.Database): void {
     backupRetention: "30",
     waterTargetMl: "2000",
     fontSize: "small",
-    homeTheme: "standard",
+    uiTheme: "standard",
     nightMode: "false"
   };
 
