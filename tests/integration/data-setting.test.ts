@@ -43,7 +43,9 @@ describe("data status, settings and clearing", () => {
         defaultPage: "/today",
         backupRetention: 7,
         waterTargetMl: 2500,
-        fontSize: "large"
+        fontSize: "large",
+        homeTheme: "notion",
+        nightMode: true
       }
     });
 
@@ -53,7 +55,9 @@ describe("data status, settings and clearing", () => {
       defaultPage: "/today",
       backupRetention: "7",
       waterTargetMl: "2500",
-      fontSize: "large"
+      fontSize: "large",
+      homeTheme: "notion",
+      nightMode: "true"
     });
   });
 

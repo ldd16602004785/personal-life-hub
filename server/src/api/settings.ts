@@ -21,7 +21,9 @@ const settingsSchema = z.object({
     .optional(),
   backupRetention: z.coerce.number().int().min(1).max(365).optional(),
   waterTargetMl: z.coerce.number().int().min(100).max(10000).optional(),
-  fontSize: z.enum(["small", "medium", "large", "xlarge"]).optional()
+  fontSize: z.enum(["small", "medium", "large", "xlarge"]).optional(),
+  homeTheme: z.enum(["standard", "weather", "notion", "bubu"]).optional(),
+  nightMode: z.boolean().optional()
 });
 
 export function registerSettingsRoutes(app: FastifyInstance): void {

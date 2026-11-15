@@ -17,7 +17,7 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { DetailDialog } from "../../components/DetailDialog";
 import { ProgressBar } from "../../components/ProgressBar";
-import { apiRequest } from "../../lib/api";
+import { apiRequest, getBootstrap } from "../../lib/api";
 import { formatClock } from "../../lib/dates";
 import type { DashboardData, DayPlan, Memo } from "../../lib/types";
 import { useUI } from "../../app/UIProvider";
@@ -27,6 +27,12 @@ export function HomePage() {
   const { notify, setSaving, setSaved, setSaveError } = useUI();
   const [memoText, setMemoText] = useState("");
   const [editingMemo, setEditingMemo] = useState<Memo | null>(null);
+  const bootstrap = useQuery({
+    queryKey: ["bootstrap"],
+    queryFn: getBootstrap,
+    staleTime: Infinity
+  });
+  const theme = bootstrap.data?.settings.homeTheme ?? "standard";
   const dashboard = useQuery({
     queryKey: ["dashboard"],
     queryFn: () => apiRequest<DashboardData>("/api/dashboard")
@@ -132,7 +138,10 @@ export function HomePage() {
   const data = dashboard.data;
 
   return (
-    <div className="page-content">
+    <div className={`page-content home-page theme-${theme}`}>
+      {theme === "weather" ? <WeatherHomeHero data={data} /> : null}
+      {theme === "notion" ? <NotionHomeHeader /> : null}
+      {theme === "bubu" ? <BubuHomeHero /> : null}
       <div className="home-grid">
         <section className="panel">
           <div className="panel-head">
@@ -249,11 +258,15 @@ export function HomePage() {
 
       <div className="section-heading">
         <div>
-          <span className="eyebrow">AT A GLANCE</span>
+          <span className="eyebrow">{theme === "notion" ? "DATABASE" : "AT A GLANCE"}</span>
           <h2>模块动态</h2>
         </div>
+        {theme === "notion" ? <span className="meta-text">6 条记录</span> : null}
       </div>
-      <div className="module-grid">
+      {theme === "notion" ? (
+        <NotionModuleDatabase data={data} />
+      ) : (
+        <div className="module-grid">
         <ModuleCard
           icon={<HandHeart />}
           title="关怀对象"
@@ -328,7 +341,8 @@ export function HomePage() {
           to="/entertainment"
           tone="blue"
         />
-      </div>
+        </div>
+      )}
       <DetailDialog
         open={Boolean(editingMemo)}
         onOpenChange={(open) => {
@@ -348,6 +362,128 @@ export function HomePage() {
           />
         ) : null}
       </DetailDialog>
+    </div>
+  );
+}
+
+function WeatherHomeHero({ data }: { data: DashboardData }) {
+  return (
+    <section className="weather-home-hero" aria-label="今日概览">
+      <div>
+        <span className="weather-hero-eyebrow">TODAY · 今日</span>
+        <h2>把今天过成喜欢的样子</h2>
+        <p>
+          {data.progress.total} 项安排，已完成 {data.progress.completed} 项
+        </p>
+      </div>
+      <div className="weather-hero-progress">
+        <strong>{data.progress.percent}%</strong>
+        <span>今日完成度</span>
+      </div>
+    </section>
+  );
+}
+
+function NotionHomeHeader() {
+  return (
+    <header className="notion-home-header">
+      <span className="notion-page-icon" aria-hidden="true">🏠</span>
+      <div>
+        <span className="notion-breadcrumb">个人空间 / 首页</span>
+        <h2>我的工作与生活</h2>
+        <p>今天值得关注的事情，都整理在这里。</p>
+      </div>
+    </header>
+  );
+}
+
+function BubuHomeHero() {
+  return (
+    <section className="bubu-home-hero">
+      <img
+        src="/assets/bubu/pair-coffee.png"
+        alt="一二和布布背着包一起散步"
+      />
+      <div>
+        <span className="eyebrow">ONE TWO & BUBU</span>
+        <h2>一二和布布陪你过好今天</h2>
+        <p>把工作做完，也给生活留一点轻松的时间。</p>
+      </div>
+    </section>
+  );
+}
+
+function NotionModuleDatabase({ data }: { data: DashboardData }) {
+  const rows = [
+    {
+      module: "关怀对象",
+      status:
+        data.modules.care.days === undefined
+          ? "暂无日期"
+          : `${data.modules.care.days} 天后`,
+      detail:
+        data.modules.care.title ??
+        data.modules.care.latestStory?.title ??
+        "记录与 TA 的重要日子",
+      next:
+        data.modules.care.latestStory?.title ?? "添加趣事或重要日期",
+      to: "/care"
+    },
+    {
+      module: "开发工作",
+      status: `${data.modules.dev.activeProjects} 个项目`,
+      detail: `${data.modules.dev.openItems} 个事项待推进`,
+      next: `本周投入 ${Math.round((data.modules.dev.weekMinutes / 60) * 10) / 10} 小时`,
+      to: "/dev"
+    },
+    {
+      module: "学习计划",
+      status: `${data.modules.learning.activeGoals} 个目标`,
+      detail: data.modules.learning.nextTask?.title ?? "还没有学习任务",
+      next: data.modules.learning.nextTask?.goalTitle ?? "创建学习目标",
+      to: "/learning"
+    },
+    {
+      module: "健身计划",
+      status: `本周 ${data.modules.fitness.completedThisWeek} 次`,
+      detail: data.modules.fitness.nextPlan?.name ?? "还没有训练安排",
+      next: data.modules.fitness.nextPlan?.bodyPart ?? "建立训练模板",
+      to: "/fitness"
+    },
+    {
+      module: "饮食计划",
+      status: `饮水 ${data.modules.diet.waterMl} ml`,
+      detail: data.modules.diet.nextMeal?.foods ?? "还没有餐食安排",
+      next: `${data.modules.diet.shoppingPending} 项采购未完成`,
+      to: "/diet"
+    },
+    {
+      module: "游戏娱乐",
+      status: `本周 ${Math.round((data.modules.entertainment.weekMinutes / 60) * 10) / 10} 小时`,
+      detail: data.modules.entertainment.activeItem?.name ?? "还没有进行中的项目",
+      next: data.modules.entertainment.activeItem
+        ? `当前进度 ${data.modules.entertainment.activeItem.progress}%`
+        : "收藏游戏、影视和书籍",
+      to: "/entertainment"
+    }
+  ];
+
+  return (
+    <div className="notion-database" role="table" aria-label="模块摘要">
+      <div className="notion-database-row notion-database-head" role="row">
+        <span role="columnheader">模块</span>
+        <span role="columnheader">状态</span>
+        <span role="columnheader">重要信息</span>
+        <span role="columnheader">下一步</span>
+      </div>
+      {rows.map((row) => (
+        <Link className="notion-database-row" to={row.to} role="row" key={row.module}>
+          <strong role="cell">{row.module}</strong>
+          <span role="cell"><span className="notion-status">{row.status}</span></span>
+          <span role="cell">{row.detail}</span>
+          <span role="cell">{row.next} <ArrowRight size={12} /></span>
+        </Link>
+      ))}
     </div>
   );
 }

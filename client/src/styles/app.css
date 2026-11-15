@@ -2064,6 +2064,396 @@ textarea {
   line-height: 1.5;
 }
 
+.home-page.theme-weather {
+  position: relative;
+  isolation: isolate;
+  min-height: calc(100vh - 83px);
+  margin: -20px -24px -28px;
+  padding: 24px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 75% 10%, rgba(255, 230, 172, 0.58), transparent 34%),
+    radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.18), transparent 34%),
+    linear-gradient(155deg, #3f79b9 0%, #77adcc 54%, #e4c99c 100%);
+  color: #fff;
+}
+
+.home-page.theme-weather::before {
+  position: absolute;
+  z-index: -1;
+  inset: -12%;
+  background:
+    radial-gradient(ellipse at 24% 38%, rgba(255, 255, 255, 0.22), transparent 32%),
+    radial-gradient(ellipse at 72% 62%, rgba(255, 245, 220, 0.18), transparent 36%);
+  content: "";
+  opacity: 0.85;
+  animation: weather-drift 18s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+:root[data-night-mode="true"] .home-page.theme-weather {
+  background:
+    radial-gradient(circle at 80% 12%, rgba(117, 89, 179, 0.32), transparent 35%),
+    linear-gradient(155deg, #111d3f 0%, #20284c 48%, #352443 100%);
+}
+
+.theme-weather .eyebrow,
+.theme-weather .text-link,
+.theme-weather .meta-text,
+.theme-weather .plan-row > div span,
+.theme-weather .progress-row,
+.theme-weather .module-name,
+.theme-weather .module-card > div:last-child > span,
+.theme-weather .memo-foot {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.theme-weather .panel,
+.theme-weather .module-card {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.13);
+  box-shadow: 0 8px 32px rgba(12, 28, 44, 0.2);
+  backdrop-filter: blur(30px) saturate(180%);
+}
+
+.theme-weather .module-card:hover,
+.theme-weather .plan-row:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.theme-weather .memo-form textarea,
+.theme-weather .check-button {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(10, 31, 50, 0.22);
+  color: #fff;
+}
+
+.theme-weather .progress-track {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.theme-weather .progress-fill {
+  background: #ffe0a2;
+}
+
+.weather-home-hero {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 150px;
+  padding: 8px 5px 4px;
+  animation: theme-enter 400ms ease-out both;
+}
+
+.weather-home-hero h2 {
+  margin: 8px 0 4px;
+  font-size: calc(32px * var(--font-scale));
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.weather-home-hero p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: calc(13px * var(--font-scale));
+}
+
+.weather-hero-eyebrow {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: calc(11px * var(--font-scale));
+  letter-spacing: 0.08em;
+}
+
+.weather-hero-progress {
+  display: grid;
+  justify-items: end;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.18);
+}
+
+.weather-hero-progress strong {
+  font-size: calc(70px * var(--font-scale));
+  font-weight: 200;
+  line-height: 0.9;
+}
+
+.weather-hero-progress span {
+  margin-top: 5px;
+  color: rgba(255, 255, 255, 0.64);
+  font-size: calc(11px * var(--font-scale));
+}
+
+.home-page.theme-notion {
+  min-height: calc(100vh - 83px);
+  margin: -20px -24px -28px;
+  padding: 30px clamp(24px, 6vw, 90px) 40px;
+  background: light-dark(#ffffff, #191919);
+}
+
+.notion-home-header {
+  display: flex;
+  max-width: 1040px;
+  align-items: flex-start;
+  gap: 16px;
+  margin: 0 auto 24px;
+  padding: 12px 0 22px;
+  border-bottom: 1px solid light-dark(#e9e9e7, #2f2f2f);
+  animation: theme-enter 180ms ease-out both;
+}
+
+.notion-page-icon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  flex: none;
+  place-items: center;
+  border-radius: 10px;
+  background: light-dark(#f7f7f5, #252525);
+  font-size: 28px;
+}
+
+.notion-home-header h2 {
+  margin: 3px 0 5px;
+  font-size: calc(30px * var(--font-scale));
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.notion-home-header p {
+  margin: 0;
+  color: light-dark(#787774, #9b9a97);
+  font-size: calc(13px * var(--font-scale));
+}
+
+.notion-breadcrumb {
+  color: light-dark(#787774, #9b9a97);
+  font-size: calc(10px * var(--font-scale));
+}
+
+.theme-notion .home-grid {
+  max-width: 1040px;
+  margin: 0 auto;
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.8fr);
+}
+
+.theme-notion .section-heading,
+.theme-notion .module-grid,
+.theme-notion .notion-database {
+  max-width: 1040px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.theme-notion .panel {
+  border-radius: 7px;
+  border-color: light-dark(#e9e9e7, #2f2f2f);
+  box-shadow: none;
+  background: light-dark(#ffffff, #191919);
+}
+
+.theme-notion .panel-head {
+  min-height: 48px;
+  border-bottom-color: light-dark(#e9e9e7, #2f2f2f);
+}
+
+.theme-notion .home-grid {
+  gap: 20px;
+}
+
+.theme-notion .memo-form textarea {
+  border-color: light-dark(#e9e9e7, #2f2f2f);
+  border-radius: 5px;
+  background: light-dark(#f7f7f5, #202020);
+}
+
+.theme-notion .button.primary {
+  border-color: light-dark(#37352f, #f1f1ef);
+  background: light-dark(#37352f, #f1f1ef);
+  color: light-dark(#ffffff, #191919);
+}
+
+.notion-database {
+  overflow: hidden;
+  border: 1px solid light-dark(#e9e9e7, #2f2f2f);
+  border-radius: 7px;
+  background: light-dark(#ffffff, #191919);
+}
+
+.notion-database-row {
+  display: grid;
+  grid-template-columns: 120px 130px minmax(0, 1.15fr) minmax(190px, 0.8fr);
+  gap: 12px;
+  align-items: center;
+  min-height: 48px;
+  border-bottom: 1px solid light-dark(#e9e9e7, #2f2f2f);
+  padding: 9px 13px;
+  color: inherit;
+  font-size: calc(11px * var(--font-scale));
+  text-decoration: none;
+}
+
+.notion-database-row:last-child {
+  border-bottom: 0;
+}
+
+.notion-database-row:not(.notion-database-head):hover {
+  background: light-dark(#f1f1ef, #252525);
+}
+
+.notion-database-head {
+  min-height: 38px;
+  color: light-dark(#787774, #9b9a97);
+  font-size: calc(9px * var(--font-scale));
+}
+
+.notion-database-row > span,
+.notion-database-row > strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notion-database-row > span:last-child {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: light-dark(#787774, #9b9a97);
+}
+
+.notion-status {
+  display: inline-block;
+  max-width: 100%;
+  border-radius: 4px;
+  padding: 2px 6px;
+  background: light-dark(#f1f1ef, #2c2c2c);
+  color: light-dark(#5f5e5b, #c8c7c4);
+  font-size: calc(9px * var(--font-scale));
+}
+
+.home-page.theme-bubu {
+  min-height: calc(100vh - 83px);
+  margin: -20px -24px -28px;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 95% 8%, rgba(248, 222, 161, 0.42), transparent 24%),
+    linear-gradient(145deg, #fffdf8, #fff6e8 48%, #f9efe4);
+}
+
+:root[data-night-mode="true"] .home-page.theme-bubu {
+  background:
+    radial-gradient(circle at 92% 10%, rgba(83, 61, 42, 0.52), transparent 26%),
+    linear-gradient(145deg, #1d1a18, #241f1c 52%, #191716);
+}
+
+.bubu-home-hero {
+  display: grid;
+  grid-template-columns: minmax(210px, 0.8fr) minmax(0, 1.2fr);
+  gap: 24px;
+  align-items: center;
+  min-height: 190px;
+  margin-bottom: 18px;
+  overflow: hidden;
+  border: 1px solid light-dark(#f0dfc8, #4b3b2e);
+  border-radius: 18px;
+  background: light-dark(rgba(255, 255, 255, 0.76), rgba(37, 31, 27, 0.9));
+  animation: theme-enter 300ms ease-out both;
+}
+
+.bubu-home-hero img {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+}
+
+.bubu-home-hero > div {
+  padding: 22px 30px 22px 0;
+}
+
+.bubu-home-hero h2 {
+  margin: 5px 0 8px;
+  font-size: calc(25px * var(--font-scale));
+  font-weight: 600;
+}
+
+.bubu-home-hero p {
+  margin: 0;
+  color: light-dark(#6b4a35, #cbb9a8);
+  font-size: calc(13px * var(--font-scale));
+}
+
+.theme-bubu .panel,
+.theme-bubu .module-card {
+  border-color: light-dark(#f0dfc8, #4b3b2e);
+  background: light-dark(rgba(255, 255, 255, 0.78), rgba(37, 31, 27, 0.88));
+}
+
+.theme-bubu .button.primary {
+  border-color: #9d7657;
+  background: #9d7657;
+}
+
+:root[data-night-mode="true"] .theme-bubu .panel,
+:root[data-night-mode="true"] .theme-bubu .module-card {
+  color: #f5ece4;
+}
+
+@keyframes weather-drift {
+  from {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(2%, 1%, 0) scale(1.04);
+  }
+}
+
+@keyframes theme-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 900px) {
+  .notion-database-row {
+    grid-template-columns: 100px 105px minmax(0, 1fr) minmax(150px, 0.8fr);
+  }
+
+  .learning-details {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .bubu-home-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bubu-home-hero > div {
+    padding: 0 20px 20px;
+  }
+
+  .notion-database {
+    overflow-x: auto;
+  }
+
+  .notion-database-row {
+    min-width: 680px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-page.theme-weather::before,
+  .weather-home-hero,
+  .notion-home-header,
+  .bubu-home-hero {
+    animation: none;
+  }
+}
+
 .training-week {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));

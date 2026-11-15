@@ -90,7 +90,16 @@ export function AppShell() {
   useEffect(() => {
     const fontSize = bootstrap.data?.settings.fontSize ?? "small";
     document.documentElement.dataset.fontSize = fontSize;
-  }, [bootstrap.data?.settings.fontSize]);
+    document.documentElement.dataset.homeTheme =
+      bootstrap.data?.settings.homeTheme ?? "standard";
+    const nightMode = bootstrap.data?.settings.nightMode === "true";
+    document.documentElement.dataset.nightMode = String(nightMode);
+    document.documentElement.style.colorScheme = nightMode ? "dark" : "light";
+  }, [
+    bootstrap.data?.settings.fontSize,
+    bootstrap.data?.settings.homeTheme,
+    bootstrap.data?.settings.nightMode
+  ]);
 
   return (
     <div className="app-shell">

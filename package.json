@@ -1,6 +1,6 @@
 {
   "name": "personal-life-hub",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "type": "module",
   "description": "个人工作生活本地浏览器应用",

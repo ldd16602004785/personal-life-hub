@@ -43,7 +43,9 @@ function seedSettings(database: Database.Database): void {
     defaultPage: "/",
     backupRetention: "30",
     waterTargetMl: "2000",
-    fontSize: "small"
+    fontSize: "small",
+    homeTheme: "standard",
+    nightMode: "false"
   };
 
   const insert = database.prepare(

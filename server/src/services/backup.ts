@@ -44,7 +44,7 @@ export async function createBackup(
       schemaVersion: schema.version,
       createdAt,
       reason,
-      appVersion: "2.0.0"
+      appVersion: "2.1.0"
     };
     const zip = new AdmZip();
     zip.addFile("manifest.json", Buffer.from(JSON.stringify(manifest, null, 2)));
