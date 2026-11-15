@@ -27,6 +27,7 @@ export async function buildApp(
     dataDir?: string;
     port?: number;
     autoBackup?: boolean;
+    clientDir?: string;
   } = {}
 ): Promise<FastifyInstance> {
   const config = createConfig(options);
@@ -123,7 +124,8 @@ export async function buildApp(
   registerEntertainmentRoutes(app);
   registerDataRoutes(app);
 
-  const clientDir = path.resolve(process.cwd(), "dist", "client");
+  const clientDir =
+    options.clientDir ?? path.resolve(process.cwd(), "dist", "client");
   if (fs.existsSync(path.join(clientDir, "index.html"))) {
     await app.register(fastifyStatic, {
       root: clientDir,

@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import { afterEach, describe, expect, it } from "vitest";
+import { localDateString } from "../../server/src/services/dates";
 import { createTestApp, type TestAppContext } from "../helpers/test-app";
 
 let context: TestAppContext | undefined;
@@ -45,7 +46,7 @@ describe("memos and today plan", () => {
 
     const plans = await context.app.inject({
       method: "GET",
-      url: `/api/day-plans?date=${new Date().toISOString().slice(0, 10)}`,
+      url: `/api/day-plans?date=${localDateString()}`,
       headers: { host: "127.0.0.1:4317" }
     });
     expect(plans.json().plans).toEqual(
@@ -78,7 +79,7 @@ describe("memos and today plan", () => {
       url: "/api/day-plans",
       headers: headers(context.token),
       payload: {
-        date: new Date().toISOString().slice(0, 10),
+        date: localDateString(),
         sourceModule: "dev",
         sourceId: itemId
       }
@@ -91,7 +92,7 @@ describe("memos and today plan", () => {
 
     const plans = await context.app.inject({
       method: "GET",
-      url: `/api/day-plans?date=${new Date().toISOString().slice(0, 10)}`,
+      url: `/api/day-plans?date=${localDateString()}`,
       headers: { host: "127.0.0.1:4317" }
     });
     const plan = plans.json().plans[0];
@@ -119,7 +120,7 @@ describe("memos and today plan", () => {
       .run(wishId, "一起看日落", now, now);
 
     const payload = {
-      date: new Date().toISOString().slice(0, 10),
+      date: localDateString(),
       sourceModule: "care",
       sourceId: wishId
     };
@@ -142,7 +143,7 @@ describe("memos and today plan", () => {
 
   it("excludes cancelled plans from progress", async () => {
     context = await createTestApp();
-    const date = new Date().toISOString().slice(0, 10);
+    const date = localDateString();
     const ids: string[] = [];
     for (const [index, status] of ["completed", "pending", "cancelled"].entries()) {
       const id = crypto.randomUUID();
@@ -189,7 +190,7 @@ describe("memos and today plan", () => {
       url: "/api/day-plans",
       headers: headers(context.token),
       payload: {
-        date: new Date().toISOString().slice(0, 10),
+        date: localDateString(),
         sourceModule: "dev",
         sourceId: itemId
       }
@@ -203,7 +204,7 @@ describe("memos and today plan", () => {
     });
     const plans = await context.app.inject({
       method: "GET",
-      url: `/api/day-plans?date=${new Date().toISOString().slice(0, 10)}`,
+      url: `/api/day-plans?date=${localDateString()}`,
       headers: { host: "127.0.0.1:4317" }
     });
 

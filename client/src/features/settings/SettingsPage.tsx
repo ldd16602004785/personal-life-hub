@@ -14,6 +14,7 @@ import { useUI } from "../../app/UIProvider";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { apiRequest } from "../../lib/api";
 import type { BackupInfo, DataStatus } from "../../lib/types";
+import { DesktopControls } from "./DesktopControls";
 
 export function SettingsPage() {
   const queryClient = useQueryClient();
@@ -163,6 +164,8 @@ export function SettingsPage() {
           </div>
         </div>
       </section>
+
+      <DesktopControls />
 
       <div className="settings-grid">
         <section className="panel">

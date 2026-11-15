@@ -16,6 +16,14 @@ export default tseslint.config(
     }
   },
   {
-    ignores: ["dist/**", "coverage/**", "node_modules/**", "playwright-report/**", "test-results/**"]
+    ignores: [
+      "dist/**",
+      "dist-desktop/**",
+      "release/**",
+      "coverage/**",
+      "node_modules/**",
+      "playwright-report/**",
+      "test-results/**"
+    ]
   }
 );

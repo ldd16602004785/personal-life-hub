@@ -19,11 +19,14 @@
   },
   "include": [
     "client",
+    "desktop",
     "server",
     "shared",
     "tests",
     "vite.config.ts",
     "vitest.config.ts",
-    "playwright.config.ts"
+    "playwright.config.ts",
+    "playwright.desktop.config.ts",
+    "tsup.desktop.config.ts"
   ]
 }

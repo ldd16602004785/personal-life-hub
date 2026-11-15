@@ -42,7 +42,8 @@ describe("local storage initialization", () => {
     expect(migrations).toEqual([
       { version: 1, name: "initial_schema" },
       { version: 2, name: "learning_plan_module" },
-      { version: 3, name: "global_ui_theme" }
+      { version: 3, name: "global_ui_theme" },
+      { version: 4, name: "desktop_welcome_state" }
     ]);
   });
 

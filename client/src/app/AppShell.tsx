@@ -9,10 +9,11 @@ import {
   SunMedium,
   Utensils
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { getBootstrap } from "../lib/api";
+import { apiRequest, getBootstrap } from "../lib/api";
+import { DesktopWelcome } from "./DesktopWelcome";
 import { QuickCaptureDialog } from "./QuickCaptureDialog";
 import { SaveState, useUI } from "./UIProvider";
 
@@ -52,7 +53,9 @@ const navigation = [
 export function AppShell() {
   const location = useLocation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [quickCaptureOpen, setQuickCaptureOpen] = useState(false);
+  const [desktopWelcomeDismissed, setDesktopWelcomeDismissed] = useState(false);
   const { saveMode, saveLabel, setSaved, setSaveError } = useUI();
   const hadConnectionError = useRef(false);
   const appliedDefaultPage = useRef(false);
@@ -106,6 +109,26 @@ export function AppShell() {
     nightMode,
     uiTheme
   ]);
+
+  async function completeDesktopWelcome() {
+    setDesktopWelcomeDismissed(true);
+    try {
+      const saved = await apiRequest<Record<string, string>>("/api/settings", {
+        method: "PUT",
+        body: JSON.stringify({ desktopWelcomeSeen: "true" })
+      });
+      queryClient.setQueryData(["settings"], saved);
+      queryClient.setQueryData(
+        ["bootstrap"],
+        bootstrap.data
+          ? { ...bootstrap.data, settings: saved }
+          : bootstrap.data
+      );
+    } catch (error) {
+      setSaveError((error as Error).message);
+      setDesktopWelcomeDismissed(false);
+    }
+  }
 
   return (
     <div
@@ -181,6 +204,15 @@ export function AppShell() {
         <Outlet />
       </main>
       <QuickCaptureDialog open={quickCaptureOpen} onOpenChange={setQuickCaptureOpen} />
+      <DesktopWelcome
+        onComplete={() => void completeDesktopWelcome()}
+        open={Boolean(
+          window.personalLifeHubDesktop &&
+            bootstrap.isSuccess &&
+            bootstrap.data.settings.desktopWelcomeSeen !== "true" &&
+            !desktopWelcomeDismissed
+        )}
+      />
     </div>
   );
 }

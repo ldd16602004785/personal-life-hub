@@ -74,7 +74,8 @@ export function registerDataRoutes(app: FastifyInstance): void {
         waterTargetMl: "2000",
         fontSize: "small",
         uiTheme: "standard",
-        nightMode: "false"
+        nightMode: "false",
+        desktopWelcomeSeen: "false"
       };
       const update = app.localDatabase.prepare(
         "INSERT INTO settings (key, value, updated_at) VALUES (?, ?, ?) " +

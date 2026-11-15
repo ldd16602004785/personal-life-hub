@@ -23,7 +23,8 @@ const settingsSchema = z.object({
   waterTargetMl: z.coerce.number().int().min(100).max(10000).optional(),
   fontSize: z.enum(["small", "medium", "large", "xlarge"]).optional(),
   uiTheme: z.enum(["standard", "weather", "notion", "bubu"]).optional(),
-  nightMode: z.boolean().optional()
+  nightMode: z.boolean().optional(),
+  desktopWelcomeSeen: z.enum(["true", "false"]).optional()
 });
 
 export function registerSettingsRoutes(app: FastifyInstance): void {

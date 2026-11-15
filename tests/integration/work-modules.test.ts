@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
+import { localDateString } from "../../server/src/services/dates";
 import { createTestApp, type TestAppContext } from "../helpers/test-app";
 
 let context: TestAppContext | undefined;
@@ -52,7 +53,7 @@ describe("development and learning modules", () => {
       payload: {
         projectId: project.id,
         itemId: item.id,
-        workDate: new Date().toISOString().slice(0, 10),
+        workDate: localDateString(),
         durationMinutes: 90,
         notes: "完成数据接口"
       }
@@ -111,7 +112,7 @@ describe("development and learning modules", () => {
         goalId: goal.id,
         stageId: stage.id,
         title: "完成类型系统练习",
-        planDate: new Date().toISOString().slice(0, 10),
+        planDate: localDateString(),
         status: "todo",
         estimatedMinutes: 45,
         notes: ""
@@ -125,7 +126,7 @@ describe("development and learning modules", () => {
       payload: {
         goalId: goal.id,
         taskId: task.id,
-        studyDate: new Date().toISOString().slice(0, 10),
+        studyDate: localDateString(),
         durationMinutes: 45,
         content: "完成泛型练习",
         progressAfter: 35

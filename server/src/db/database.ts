@@ -45,7 +45,8 @@ function seedSettings(database: Database.Database): void {
     waterTargetMl: "2000",
     fontSize: "small",
     uiTheme: "standard",
-    nightMode: "false"
+    nightMode: "false",
+    desktopWelcomeSeen: "false"
   };
 
   const insert = database.prepare(

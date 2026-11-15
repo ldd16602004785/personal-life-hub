@@ -7,6 +7,7 @@ import {
 } from "../../../shared/schemas/day-plan";
 import { AppError } from "./errors";
 import { listSourceItems, resolveSource } from "../services/source-items";
+import { localDateString } from "../services/dates";
 
 interface DayPlanRow {
   id: string;
@@ -28,7 +29,7 @@ interface DayPlanRow {
 export function registerDayPlanRoutes(app: FastifyInstance): void {
   app.get("/api/day-plans", async (request) => {
     const query = request.query as { date?: string };
-    const date = query.date ?? new Date().toISOString().slice(0, 10);
+    const date = query.date ?? localDateString();
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
       throw new AppError(400, "INVALID_DATE", "日期格式无效");
     }

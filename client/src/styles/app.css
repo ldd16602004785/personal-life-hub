@@ -3177,3 +3177,90 @@ textarea {
     animation: none;
   }
 }
+
+.desktop-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.desktop-info {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+}
+
+.desktop-info > svg {
+  flex: 0 0 auto;
+  color: #2f6f62;
+}
+
+.desktop-info > div {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.desktop-info strong {
+  font-size: calc(11px * var(--font-scale));
+}
+
+.desktop-info span {
+  overflow: hidden;
+  color: light-dark(#697077, #aab0b6);
+  font-size: calc(8px * var(--font-scale));
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.confirm-dialog.desktop-welcome {
+  width: min(520px, calc(100vw - 32px));
+}
+
+.desktop-welcome-list {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0 4px;
+}
+
+.desktop-welcome-list > div {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 12px;
+  border: 1px solid light-dark(#e5e7e9, #30343a);
+  border-radius: 10px;
+  background: light-dark(#f8f9f7, #1b1d1e);
+}
+
+.desktop-welcome-list > div > svg {
+  margin-top: 1px;
+  color: #2f6f62;
+}
+
+.desktop-welcome-list span {
+  display: grid;
+  gap: 3px;
+  color: light-dark(#697077, #aab0b6);
+  font-size: calc(9px * var(--font-scale));
+  line-height: 1.55;
+}
+
+.desktop-welcome-list strong {
+  color: light-dark(#25282a, #f0f1ef);
+  font-size: calc(10px * var(--font-scale));
+}
+
+@media (max-width: 760px) {
+  .desktop-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .desktop-controls .row-actions {
+    justify-content: flex-start;
+  }
+}

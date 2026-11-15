@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
+import { localDateString } from "../../server/src/services/dates";
 import { createTestApp, type TestAppContext } from "../helpers/test-app";
 
 let context: TestAppContext | undefined;
@@ -35,7 +36,7 @@ describe("fitness, diet and entertainment modules", () => {
       method: "POST",
       url: "/api/fitness/sessions",
       headers: headers(context.token),
-      payload: { templateId: template.id, sessionDate: new Date().toISOString().slice(0, 10) }
+      payload: { templateId: template.id, sessionDate: localDateString() }
     });
     const session = sessionResponse.json();
     const updated = await context.app.inject({
@@ -71,7 +72,7 @@ describe("fitness, diet and entertainment modules", () => {
 
   it("stores meal plans, actual meals, water and generated shopping candidates", async () => {
     context = await createTestApp();
-    const date = new Date().toISOString().slice(0, 10);
+    const date = localDateString();
     const plan = await context.app.inject({
       method: "POST",
       url: "/api/diet/meal-plans",
@@ -147,7 +148,7 @@ describe("fitness, diet and entertainment modules", () => {
       headers: headers(context.token),
       payload: {
         itemId: item.id,
-        logDate: new Date().toISOString().slice(0, 10),
+        logDate: localDateString(),
         durationMinutes: 90,
         progress: 62,
         notes: "推进一章"

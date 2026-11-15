@@ -404,6 +404,14 @@ const migrations: Migration[] = [
 
       DELETE FROM settings WHERE key = 'homeTheme';
     `
+  },
+  {
+    version: 4,
+    name: "desktop_welcome_state",
+    sql: `
+      INSERT OR IGNORE INTO settings (key, value, updated_at)
+      VALUES ('desktopWelcomeSeen', 'false', datetime('now'));
+    `
   }
 ];
 

@@ -1,9 +1,11 @@
 {
   "name": "personal-life-hub",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "private": true,
   "type": "module",
-  "description": "个人工作生活本地浏览器应用",
+  "description": "个人工作生活 Windows 单机桌面应用",
+  "author": "Personal Life Hub",
+  "main": "dist-desktop/main.cjs",
   "scripts": {
     "dev": "concurrently -k \"npm:dev:server\" \"npm:dev:client\"",
     "dev:client": "vite --host 127.0.0.1",
@@ -11,14 +13,22 @@
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build",
     "build:server": "tsup server/src/index.ts --format esm --platform node --out-dir dist/server --sourcemap --clean",
+    "build:desktop:main": "tsup --config tsup.desktop.config.ts",
+    "build:desktop": "npm run build && npm run build:desktop:main",
+    "desktop:dev": "npm run build:desktop && electron .",
+    "desktop:dir": "npm run build:desktop && electron-builder --win dir --x64",
+    "desktop:package": "npm run build:desktop && electron-builder --win dir --x64 && node scripts/prepare-desktop-release.mjs",
     "start": "node dist/server/index.js",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "test:desktop": "npm run build:desktop && playwright test --config playwright.desktop.config.ts",
+    "test:desktop:packaged": "node scripts/smoke-packaged-desktop.mjs",
     "e2e:serve": "node scripts/clean-e2e-data.mjs && npm run build && node dist/server/index.js",
-    "verify": "npm run typecheck && npm run lint && npm run test && npm run test:e2e"
+    "verify": "npm run typecheck && npm run lint && npm run test && npm run test:e2e",
+    "verify:all": "npm run verify && npm run test:desktop && npm run desktop:package && npm run test:desktop:packaged"
   },
   "dependencies": {
     "@fastify/multipart": "^10.1.8",
@@ -48,6 +58,8 @@
     "@vitejs/plugin-react": "^6.3.0",
     "@vitest/coverage-v8": "^5.1.0",
     "concurrently": "^10.0.7",
+    "electron": "^45.3.2",
+    "electron-builder": "^26.18.0",
     "eslint": "^10.15.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "prettier": "^3.10.1",
@@ -57,5 +69,33 @@
     "typescript-eslint": "^8.72.2",
     "vite": "^8.3.8",
     "vitest": "^5.1.0"
+  },
+  "build": {
+    "appId": "cn.personal.lifehub",
+    "productName": "个人工作生活",
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/better-sqlite3/**"
+    ],
+    "npmRebuild": false,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**",
+      "dist-desktop/**",
+      "package.json"
+    ],
+    "win": {
+      "icon": "build/icon.png",
+      "target": [
+        {
+          "target": "dir",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    }
   }
 }
